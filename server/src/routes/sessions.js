@@ -2,13 +2,14 @@ const express = require('express');
 const StudySession = require('../models/StudySession');
 const Subject = require('../models/Subject');
 const ownsSubject = require('../utils/ownsSubject');
+const isValidDate = require('../utils/isValidDate');
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
         const { date, seconds, subject } = req.body;
-        if (!date || !(seconds > 0)) {
+        if (!isValidDate(date) || !Number.isInteger(seconds) || seconds < 1) {
             return res.status(400).json({ error: 'date and seconds (> 0) are required' });
         }
         if (!(await ownsSubject(req.userId, subject))) {
@@ -18,10 +19,15 @@ router.post('/', async (req, res) => {
         const session = await StudySession.create({ user: req.userId, date, seconds, subject });
 
         if (subject) {
-            await Subject.updateOne(
-                { _id: subject, user: req.userId },
-                { $inc: { studiedSeconds: seconds } }
-            );
+            try {
+                await Subject.updateOne(
+                    { _id: subject, user: req.userId },
+                    { $inc: { studiedSeconds: seconds } }
+                );
+            } catch (err) {
+                await StudySession.deleteOne({ _id: session._id });
+                throw err;
+            }
         }
 
         res.status(201).json(session);

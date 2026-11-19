@@ -8,12 +8,12 @@ function pick(source, fields) {
     return result;
 }
 
-function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, afterDelete } = {}) {
+function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, afterDelete, sort = { createdAt: 1 } } = {}) {
     const router = express.Router();
 
     router.get('/', async (req, res) => {
         try {
-            const items = await Model.find({ user: req.userId, ...listFilter(req.query) }).sort({ createdAt: 1 });
+            const items = await Model.find({ user: req.userId, ...listFilter(req.query) }).sort(sort);
             res.json(items);
         } catch (err) {
             console.error(err);

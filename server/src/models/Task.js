@@ -10,5 +10,5 @@ const taskSchema = new Schema(
     },
     { timestamps: true }
 );
-
+taskSchema.index({ user: 1, date: 1 });
 module.exports = model('Task', taskSchema);

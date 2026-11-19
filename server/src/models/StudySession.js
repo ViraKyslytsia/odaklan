@@ -9,5 +9,5 @@ const studySessionSchema = new Schema(
     },
     { timestamps: true }
 );
-
+studySessionSchema.index({ user: 1, date: 1 });
 module.exports = model('StudySession', studySessionSchema);

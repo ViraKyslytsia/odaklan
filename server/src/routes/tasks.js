@@ -1,12 +1,17 @@
 const Task = require('../models/Task');
 const createCrudRouter = require('../utils/crud');
 const ownsSubject = require('../utils/ownsSubject');
+const isValidDate = require('../utils/isValidDate');
 
 const router = createCrudRouter(Task, {
     fields: ['title', 'subject', 'date', 'completed'],
     listFilter: (query) => (query.date ? { date: query.date } : {}),
-    validate: async (req) =>
-        (await ownsSubject(req.userId, req.body.subject)) ? null : 'Subject not found',
+    validate: async (req) => {
+        if (req.body.date !== undefined && !isValidDate(req.body.date)) {
+            return 'date must be YYYY-MM-DD';
+        }
+        return (await ownsSubject(req.userId, req.body.subject)) ? null : 'Subject not found';
+    },
 });
 
 router.patch('/:id/toggle', async (req, res) => {

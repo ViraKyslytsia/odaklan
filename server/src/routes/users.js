@@ -1,3 +1,4 @@
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const express = require('express');
 const User = require('../models/User');
 
@@ -19,7 +20,18 @@ async function updateProfile(req, res) {
     try {
         const updates = {};
         for (const field of ['name', 'email', 'avatar']) {
-            if (req.body[field] !== undefined) updates[field] = req.body[field];
+            const value = req.body[field];
+            if (value === undefined) continue;
+            if (typeof value !== 'string') {
+                return res.status(400).json({ error: `${field} must be a string` });
+            }
+            updates[field] = value.trim();
+        }
+        if (updates.email !== undefined && !EMAIL_RE.test(updates.email)) {
+            return res.status(400).json({ error: 'Invalid email format' });
+        }
+        if (updates.avatar && !/^(data:image\/|https?:\/\/)/.test(updates.avatar)) {
+            return res.status(400).json({ error: 'avatar must be an image data URL or http(s) link' });
         }
 
         const settings = req.body.settings;

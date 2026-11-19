@@ -3,13 +3,12 @@ const mongoose = require('mongoose');
 const StudySession = require('../models/StudySession');
 
 const router = express.Router();
-const DATE = /^\d{4}-\d{2}-\d{2}$/;
+const isValidDate = require('../utils/isValidDate');
 
 router.get('/day', async (req, res) => {
     try {
         const { date } = req.query;
-        if (!date) return res.status(400).json({ error: 'date is required' });
-        if (!DATE.test(date)) return res.status(400).json({ error: 'Invalid date format' });
+        if (!isValidDate(date)) return res.status(400).json({ error: 'date must be YYYY-MM-DD' });
 
         const sessions = await StudySession.find({ user: req.userId, date });
         const totalSeconds = sessions.reduce((sum, s) => sum + s.seconds, 0);
@@ -24,8 +23,9 @@ router.get('/day', async (req, res) => {
 router.get('/range', async (req, res) => {
     try {
         const { from, to } = req.query;
-        if (!from || !to) return res.status(400).json({ error: 'from and to are required' });
-        if (!DATE.test(from) || !DATE.test(to)) return res.status(400).json({ error: 'Invalid date format' });
+        if (!isValidDate(from) || !isValidDate(to)) {
+            return res.status(400).json({ error: 'from and to must be YYYY-MM-DD' });
+        }
 
         const match = {
             user: new mongoose.Types.ObjectId(req.userId),

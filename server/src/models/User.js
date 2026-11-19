@@ -9,6 +9,7 @@ const userSchema = new Schema(
         verified: { type: Boolean, default: false },
         code: String,
         codeExpires: Date,
+        codeSentAt: Date,
         codeAttempts: { type: Number, default: 0 },
         settings: {
             language: { type: String, enum: ['en', 'tr', 'ru', 'ua'], default: 'en' },
