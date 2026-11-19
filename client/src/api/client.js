@@ -1,9 +1,18 @@
 const BASE = import.meta.env.VITE_API_URL || '';
 const TOKEN_KEY = 'odaklan_token';
 
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
-export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
-export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
+export const getToken = () =>
+    localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+
+export const setToken = (token, remember = true) => {
+    clearToken();
+    (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, token);
+};
+
+export const clearToken = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+};
 
 export class ApiError extends Error {
     constructor(message, status) {
