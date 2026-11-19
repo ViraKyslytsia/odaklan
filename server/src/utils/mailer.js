@@ -1,11 +1,13 @@
 const nodemailer = require('nodemailer');
 
-const hasSmtp = process.env.SMTP_USER && process.env.SMTP_PASS;
+const hasSmtp = Boolean(process.env.SMTP_USER && process.env.SMTP_PASS);
+const port = Number(process.env.SMTP_PORT || 587);
 
 const transporter = hasSmtp
     ? nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: Number(process.env.SMTP_PORT || 587),
+        port,
+        secure: port === 465,
         auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
     })
     : null;
@@ -27,13 +29,20 @@ async function sendCode(to, code) {
         console.log(`[DEV] Verification code for ${to}: ${code}`);
         return;
     }
-    await transporter.sendMail({
-        from: process.env.MAIL_FROM || process.env.SMTP_USER,
-        to,
-        subject: 'odaklan: your verification code',
-        text: `Your verification code is ${code}. It expires in 10 minutes.`,
-        html: buildHtml(code),
-    });
+
+    try {
+        await transporter.sendMail({
+            from: process.env.MAIL_FROM || process.env.SMTP_USER,
+            to,
+            subject: 'odaklan: your verification code',
+            text: `Your verification code is ${code}. It expires in 10 minutes.`,
+            html: buildHtml(code),
+        });
+        console.log(`Verification email sent to ${to}`);
+    } catch (err) {
+        console.error(`Email sending failed (${err.code || 'no code'}): ${err.message}`);
+        throw err;
+    }
 }
 
-module.exports = { sendCode };
+module.exports = { sendCode, buildHtml, transporter };

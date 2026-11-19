@@ -6,6 +6,7 @@ const User = require('../models/User');
 const { sendCode } = require('../utils/mailer');
 
 const router = express.Router();
+const MAX_CODE_ATTEMPTS = 5;
 
 function createToken(userId) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -14,6 +15,7 @@ function createToken(userId) {
 async function issueCode(user) {
     user.code = String(crypto.randomInt(100000, 1000000));
     user.codeExpires = new Date(Date.now() + 10 * 60 * 1000);
+    user.codeAttempts = 0;
     await user.save();
     await sendCode(user.email, user.code);
 }
@@ -59,13 +61,27 @@ router.post('/verify', async (req, res) => {
         const { email, code } = req.body;
         const user = await User.findOne({ email: (email || '').toLowerCase() });
 
-        if (!user || user.code !== String(code) || !user.codeExpires || user.codeExpires < new Date()) {
+        if (!user || !user.code || !user.codeExpires || user.codeExpires < new Date()) {
+            return res.status(400).json({ error: 'Invalid or expired code' });
+        }
+
+        if (user.code !== String(code)) {
+            user.codeAttempts += 1;
+            if (user.codeAttempts >= MAX_CODE_ATTEMPTS) {
+                user.code = undefined;
+                user.codeExpires = undefined;
+                user.codeAttempts = 0;
+                await user.save();
+                return res.status(400).json({ error: 'Too many wrong attempts. Request a new code' });
+            }
+            await user.save();
             return res.status(400).json({ error: 'Invalid or expired code' });
         }
 
         user.verified = true;
         user.code = undefined;
         user.codeExpires = undefined;
+        user.codeAttempts = 0;
         await user.save();
 
         res.json({ token: createToken(user.id) });
