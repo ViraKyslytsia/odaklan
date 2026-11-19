@@ -30,7 +30,7 @@ async function updateProfile(req, res) {
         }
 
         const user = await User.findByIdAndUpdate(req.userId, updates, {
-            new: true,
+            returnDocument: 'after',
             runValidators: true,
         }).select(publicFields);
 

@@ -8,13 +8,19 @@ const { sendCode } = require('../utils/mailer');
 const router = express.Router();
 const MAX_CODE_ATTEMPTS = 5;
 
+const CODE_TTL_MS = 10 * 60 * 1000;
+const RESEND_COOLDOWN_MS = 60 * 1000;
+
+function sentRecently(user) {
+    return Boolean(user.codeExpires) && user.codeExpires.getTime() - Date.now() > CODE_TTL_MS - RESEND_COOLDOWN_MS;
+}
 function createToken(userId) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
 }
 
 async function issueCode(user) {
     user.code = String(crypto.randomInt(100000, 1000000));
-    user.codeExpires = new Date(Date.now() + 10 * 60 * 1000);
+    user.codeExpires = new Date(Date.now() + CODE_TTL_MS);
     user.codeAttempts = 0;
     await user.save();
     await sendCode(user.email, user.code);
@@ -36,7 +42,12 @@ router.post('/register', async (req, res) => {
         if (!user) user = new User({ email: emailLower });
         user.name = name;
         user.passwordHash = await bcrypt.hash(password, 10);
-        await issueCode(user);
+
+        if (sentRecently(user)) {
+            await user.save();
+        } else {
+            await issueCode(user);
+        }
 
         res.status(201).json({ ok: true });
     } catch (err) {
@@ -48,7 +59,7 @@ router.post('/register', async (req, res) => {
 router.post('/resend', async (req, res) => {
     try {
         const user = await User.findOne({ email: (req.body.email || '').toLowerCase() });
-        if (user && !user.verified) await issueCode(user);
+        if (user && !user.verified && !sentRecently(user)) await issueCode(user);
         res.json({ ok: true });
     } catch (err) {
         console.error(err);

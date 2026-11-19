@@ -43,7 +43,7 @@ function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, af
             const item = await Model.findOneAndUpdate(
                 { _id: req.params.id, user: req.userId },
                 pick(req.body, fields),
-                { new: true, runValidators: true }
+                { returnDocument: 'after', runValidators: true }
             );
             if (!item) return res.status(404).json({ error: 'Not found' });
             res.json(item);

@@ -1,0 +1,631 @@
+# ============================================================
+#  odaklan: full backend test suite (REST Client for VS Code)
+#  How to use: click "Send Request" above each block, IN ORDER.
+#  Start with 2.1 and 2.2 (they create token1 and token2).
+#  The "Expected" line above each request is the correct result.
+#  Do NOT commit real tokens or real emails into this file.
+# ============================================================
+
+@baseUrl = http://localhost:4000
+@email1 = test@example.com
+@email2 = test2@example.com
+@password = secret123
+@today = 2026-11-19
+@tomorrow = 2026-11-20
+
+# Used only in section 10 (new user). Use your OWN inbox:
+# an address like yourname+t3@gmail.com arrives in yourname@gmail.com
+@newEmail = yourname+t3@gmail.com
+# Paste the 6-digit code from the email here before sending 10.5:
+@newCode = 000000
+
+
+### ============ 1. BASIC ============
+
+### 1.1 Health check
+# Expected: 200 {"ok":true}
+GET {{baseUrl}}/api/health
+
+### 1.2 Unknown address
+# Expected: 404 {"error":"Not found"}
+GET {{baseUrl}}/api/unknown
+
+### 1.3 Wrong address from your screenshot (missing /auth)
+# Expected: 404 {"error":"Not found"}  -> the correct address is /api/auth/register
+POST {{baseUrl}}/api/register
+Content-Type: application/json
+
+{ "name": "X", "email": "x@example.com", "password": "secret123" }
+
+
+### ============ 2. LOGIN AND TOKENS ============
+
+### 2.1 Login user 1  (REQUIRED FIRST)
+# Expected: 200 {"token":"..."}
+# @name login1
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{email1}}", "password": "{{password}}" }
+
+###
+
+@token1 = {{login1.response.body.$.token}}
+
+### 2.2 Login user 2  (REQUIRED SECOND)
+# Expected: 200 {"token":"..."}
+# @name login2
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{email2}}", "password": "{{password}}" }
+
+###
+
+@token2 = {{login2.response.body.$.token}}
+
+### 2.3 Wrong password
+# Expected: 401 {"error":"Wrong email or password"}
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{email1}}", "password": "wrongpass" }
+
+### 2.4 Login with no body
+# Expected: 401 {"error":"Wrong email or password"}
+POST {{baseUrl}}/api/auth/login
+
+### 2.5 Register with no body
+# Expected: 400 {"error":"Name, email and password (6+ characters) are required"}
+POST {{baseUrl}}/api/auth/register
+
+### 2.6 Register with a short password
+# Expected: 400 {"error":"Name, email and password (6+ characters) are required"}
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{ "name": "A", "email": "a@example.com", "password": "123" }
+
+### 2.7 Register an email that is already verified
+# Expected: 409 {"error":"Email is already registered"}
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{ "name": "Vira", "email": "{{email1}}", "password": "{{password}}" }
+
+### 2.8 Verify with a wrong code (user 1 is already verified)
+# Expected: 400 {"error":"Invalid or expired code"}
+POST {{baseUrl}}/api/auth/verify
+Content-Type: application/json
+
+{ "email": "{{email1}}", "code": "000000" }
+
+### 2.9 Request without a token
+# Expected: 401 {"error":"No token"}
+GET {{baseUrl}}/api/profile
+
+### 2.10 Request with a broken token
+# Expected: 401 {"error":"Invalid token"}
+GET {{baseUrl}}/api/profile
+Authorization: Bearer abc123
+
+
+### ============ 3. PROFILE ============
+
+### 3.1 Get profile
+# Expected: 200 name, email, avatar and settings (language en, focusMinutes 25, ...)
+GET {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+
+### 3.2 Change name (PUT)
+# Expected: 200 name is "Vira K"
+PUT {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "name": "Vira K" }
+
+### 3.3 Change timer settings
+# Expected: 200 focusMinutes 30, shortBreakMinutes 7, other settings unchanged
+PUT {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "settings": { "focusMinutes": 30, "shortBreakMinutes": 7 } }
+
+### 3.4 Change language
+# Expected: 200 language is "ru"
+PATCH {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "settings": { "language": "ru" } }
+
+### 3.5 Invalid language
+# Expected: 400 validation error about settings.language
+PUT {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "settings": { "language": "xx" } }
+
+### 3.6 Timer value out of range
+# Expected: 400 validation error about settings.focusMinutes
+PUT {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "settings": { "focusMinutes": 0 } }
+
+### 3.7 Take another user's email
+# Expected: 409 {"error":"Email is already used"}
+PUT {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "email": "{{email2}}" }
+
+### 3.8 Set a small avatar (base64)
+# Expected: 200 avatar contains the data string
+PATCH {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "avatar": "data:image/png;base64,iVBORw0KGgo=" }
+
+### 3.9 Restore name
+# Expected: 200 name is "Vira"
+PUT {{baseUrl}}/api/profile
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "name": "Vira" }
+
+
+### ============ 4. SUBJECTS ============
+
+### 4.1 Create subject "Math"
+# Expected: 201 studiedSeconds is 0, user is filled in automatically
+# @name createSubject
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "name": "Math", "color": "#6D5BFF" }
+
+###
+
+@subjectId = {{createSubject.response.body.$._id}}
+
+### 4.2 Try to set the study time by hand (must be ignored)
+# Expected: 201 and studiedSeconds is still 0
+# @name createPhysics
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "name": "Physics", "studiedSeconds": 999 }
+
+###
+
+@physicsId = {{createPhysics.response.body.$._id}}
+
+### 4.3 Subject without a name
+# Expected: 400 validation error about name
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "color": "#FF8A5B" }
+
+### 4.4 List subjects
+# Expected: 200 list with Math and Physics
+GET {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+
+### 4.5 Rename subject (PUT)
+# Expected: 200 name is "Mathematics"
+PUT {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "name": "Mathematics" }
+
+### 4.6 Change color (PATCH)
+# Expected: 200 color is "#FF8A5B"
+PATCH {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "color": "#FF8A5B" }
+
+
+### ============ 5. TASKS ============
+
+### 5.1 Create task for today
+# Expected: 201 completed is false
+# @name createTask
+POST {{baseUrl}}/api/tasks
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Homework", "subject": "{{subjectId}}", "date": "{{today}}" }
+
+###
+
+@taskId = {{createTask.response.body.$._id}}
+
+### 5.2 Task with a bad date
+# Expected: 400 validation error about date
+POST {{baseUrl}}/api/tasks
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Bad date", "date": "abc" }
+
+### 5.3 Task without a title
+# Expected: 400 validation error about title
+POST {{baseUrl}}/api/tasks
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "date": "{{today}}" }
+
+### 5.4 Tasks for today
+# Expected: 200 list contains "Homework"
+GET {{baseUrl}}/api/tasks?date={{today}}
+Authorization: Bearer {{token1}}
+
+### 5.5 Tasks for tomorrow
+# Expected: 200 []
+GET {{baseUrl}}/api/tasks?date={{tomorrow}}
+Authorization: Bearer {{token1}}
+
+### 5.6 Toggle done (first time)
+# Expected: 200 completed is true
+PATCH {{baseUrl}}/api/tasks/{{taskId}}/toggle
+Authorization: Bearer {{token1}}
+
+### 5.7 Toggle done (second time)
+# Expected: 200 completed is false again
+PATCH {{baseUrl}}/api/tasks/{{taskId}}/toggle
+Authorization: Bearer {{token1}}
+
+### 5.8 Change title (PUT)
+# Expected: 200 title is "Homework 2"
+PUT {{baseUrl}}/api/tasks/{{taskId}}
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Homework 2" }
+
+### 5.9 Mark done with PATCH
+# Expected: 200 completed is true
+PATCH {{baseUrl}}/api/tasks/{{taskId}}
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "completed": true }
+
+### 5.10 Delete task
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/tasks/{{taskId}}
+Authorization: Bearer {{token1}}
+
+### 5.11 Delete the same task again
+# Expected: 404 {"error":"Not found"}
+DELETE {{baseUrl}}/api/tasks/{{taskId}}
+Authorization: Bearer {{token1}}
+
+
+### ============ 6. EXAMS ============
+
+### 6.1 Create exam with a checklist
+# Expected: 201 subtasks have their own _id and done=false
+# Time is stored in UTC (in Turkey 10:30 is shown as 07:30:00.000Z)
+# @name createExam
+POST {{baseUrl}}/api/exams
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Calculus", "date": "2026-12-01T10:30:00", "subtasks": [{ "title": "Chapter 1" }] }
+
+###
+
+@examId = {{createExam.response.body.$._id}}
+
+### 6.2 Exam without a date
+# Expected: 400 validation error about date
+POST {{baseUrl}}/api/exams
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "No date" }
+
+### 6.3 List exams
+# Expected: 200 list contains "Calculus"
+GET {{baseUrl}}/api/exams
+Authorization: Bearer {{token1}}
+
+### 6.4 Update the checklist (PUT)
+# Expected: 200 two subtasks, the first has done=true
+PUT {{baseUrl}}/api/exams/{{examId}}
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "subtasks": [{ "title": "Chapter 1", "done": true }, { "title": "Chapter 2" }] }
+
+### 6.5 Delete exam
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/exams/{{examId}}
+Authorization: Bearer {{token1}}
+
+
+### ============ 7. STUDY SESSIONS AND STATISTICS ============
+
+### 7.1 Save a 25-minute session
+# Expected: 201
+# NOTE: every run of this file adds 1500 seconds, so totals grow by 1500 per run
+POST {{baseUrl}}/api/sessions
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "date": "{{today}}", "seconds": 1500, "subject": "{{subjectId}}" }
+
+### 7.2 Session with 0 seconds
+# Expected: 400 {"error":"date and seconds (> 0) are required"}
+POST {{baseUrl}}/api/sessions
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "date": "{{today}}", "seconds": 0 }
+
+### 7.3 Session longer than a day
+# Expected: 400 validation error about seconds (max 86400)
+POST {{baseUrl}}/api/sessions
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "date": "{{today}}", "seconds": 90000 }
+
+### 7.4 Session with a bad date
+# Expected: 400 validation error about date
+POST {{baseUrl}}/api/sessions
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "date": "abc", "seconds": 600 }
+
+### 7.5 Subject study time grew
+# Expected: 200 "Mathematics" has studiedSeconds 1500 (or a multiple of 1500)
+GET {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+
+### 7.6 Statistics for one day
+# Expected: 200 totalSeconds 1500 (or a multiple) and a list of sessions
+GET {{baseUrl}}/api/stats/day?date={{today}}
+Authorization: Bearer {{token1}}
+
+### 7.7 Statistics for a period (for charts)
+# Expected: 200 totalSeconds, days [{date,totalSeconds}], subjects [{subject,totalSeconds}]
+GET {{baseUrl}}/api/stats/range?from=2026-11-01&to=2026-11-30
+Authorization: Bearer {{token1}}
+
+### 7.8 Statistics with a bad date
+# Expected: 400 {"error":"date must be YYYY-MM-DD"}
+GET {{baseUrl}}/api/stats/day?date=abc
+Authorization: Bearer {{token1}}
+
+### 7.9 Period with a bad date
+# Expected: 400 {"error":"from and to must be YYYY-MM-DD"}
+GET {{baseUrl}}/api/stats/range?from=abc&to=2026-11-30
+Authorization: Bearer {{token1}}
+
+### 7.10 Statistics without a date
+# Expected: 400 {"error":"date must be YYYY-MM-DD"}
+GET {{baseUrl}}/api/stats/day
+Authorization: Bearer {{token1}}
+
+
+### ============ 8. SCHEDULE ============
+
+### 8.1 Add a lesson (4 = Thursday)
+# Expected: 201
+# @name createLesson
+POST {{baseUrl}}/api/schedule
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Calculus lecture", "subject": "{{subjectId}}", "dayOfWeek": 4, "startTime": "09:00", "endTime": "10:30", "place": "A-101" }
+
+###
+
+@lessonId = {{createLesson.response.body.$._id}}
+
+### 8.2 End time before start time
+# Expected: 400 {"error":"endTime must be later than startTime"}
+POST {{baseUrl}}/api/schedule
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Bad time", "dayOfWeek": 4, "startTime": "10:30", "endTime": "09:00" }
+
+### 8.3 Wrong time format
+# Expected: 400 validation error about startTime
+POST {{baseUrl}}/api/schedule
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Bad format", "dayOfWeek": 4, "startTime": "9am", "endTime": "10:30" }
+
+### 8.4 Lessons on Thursday
+# Expected: 200 list contains "Calculus lecture"
+GET {{baseUrl}}/api/schedule?day=4
+Authorization: Bearer {{token1}}
+
+### 8.5 Lessons on Tuesday
+# Expected: 200 []
+GET {{baseUrl}}/api/schedule?day=2
+Authorization: Bearer {{token1}}
+
+### 8.6 Change the room (PUT)
+# Expected: 200 place is "B-202"
+PUT {{baseUrl}}/api/schedule/{{lessonId}}
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "place": "B-202" }
+
+### 8.7 Delete the lesson
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/schedule/{{lessonId}}
+Authorization: Bearer {{token1}}
+
+
+### ============ 9. ISOLATION (user 2 must NOT see user 1 data) ============
+
+### 9.1 User 2 subjects
+# Expected: 200 and the list does NOT contain "Mathematics"
+GET {{baseUrl}}/api/subjects
+Authorization: Bearer {{token2}}
+
+### 9.2 User 2 tasks
+# Expected: 200 and none of user 1 tasks
+GET {{baseUrl}}/api/tasks?date={{today}}
+Authorization: Bearer {{token2}}
+
+### 9.3 User 2 tries to delete user 1 subject
+# Expected: 404 {"error":"Not found"}
+DELETE {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{token2}}
+
+### 9.4 User 2 tries to rename user 1 subject
+# Expected: 404 {"error":"Not found"}
+PUT {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{token2}}
+Content-Type: application/json
+
+{ "name": "Hacked" }
+
+### 9.5 User 2 attaches a task to user 1 subject
+# Expected: 400 {"error":"Subject not found"}
+POST {{baseUrl}}/api/tasks
+Authorization: Bearer {{token2}}
+Content-Type: application/json
+
+{ "title": "Sneaky", "subject": "{{subjectId}}", "date": "{{today}}" }
+
+### 9.6 User 2 attaches a session to user 1 subject
+# Expected: 400 {"error":"Subject not found"}
+POST {{baseUrl}}/api/sessions
+Authorization: Bearer {{token2}}
+Content-Type: application/json
+
+{ "date": "{{today}}", "seconds": 600, "subject": "{{subjectId}}" }
+
+### 9.7 User 1 subject is still intact
+# Expected: 200 list still contains "Mathematics"
+GET {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+
+
+### ============ 10. NEW USER: EMAIL CODE, COOLDOWN, ATTEMPT LIMIT ============
+# Before this section: set @newEmail at the top to your own inbox.
+
+### 10.1 Register a new user
+# Expected: 201 {"ok":true} and an email with a 6-digit code (check Spam too)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{ "name": "Third User", "email": "{{newEmail}}", "password": "{{password}}" }
+
+### 10.2 Resend immediately (cooldown)
+# Expected: 200 {"ok":true} but NO new email (less than 60 seconds passed)
+POST {{baseUrl}}/api/auth/resend
+Content-Type: application/json
+
+{ "email": "{{newEmail}}" }
+
+### 10.3 Wrong code. SEND THIS REQUEST 5 TIMES
+# Expected: the first 4 times 400 "Invalid or expired code"
+#           the 5th time 400 "Too many wrong attempts. Request a new code"
+POST {{baseUrl}}/api/auth/verify
+Content-Type: application/json
+
+{ "email": "{{newEmail}}", "code": "000000" }
+
+### 10.4 Resend after the lockout
+# Expected: 200 {"ok":true} and a NEW email with a new code
+POST {{baseUrl}}/api/auth/resend
+Content-Type: application/json
+
+{ "email": "{{newEmail}}" }
+
+### 10.5 Verify with the new code (paste it into @newCode at the top first)
+# Expected: 200 {"token":"..."}
+POST {{baseUrl}}/api/auth/verify
+Content-Type: application/json
+
+{ "email": "{{newEmail}}", "code": "{{newCode}}" }
+
+### 10.6 Login as the new user
+# Expected: 200 {"token":"..."}
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "email": "{{newEmail}}", "password": "{{password}}" }
+
+
+### ============ 11. SUBJECT DELETE KEEPS HISTORY ============
+
+### 11.1 Create a temporary subject
+# @name createTempSubject
+POST {{baseUrl}}/api/subjects
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "name": "Temp", "color": "#FF8A5B" }
+
+###
+
+@tempSubjectId = {{createTempSubject.response.body.$._id}}
+
+### 11.2 Create a task for it
+# @name createTempTask
+POST {{baseUrl}}/api/tasks
+Authorization: Bearer {{token1}}
+Content-Type: application/json
+
+{ "title": "Temp task", "subject": "{{tempSubjectId}}", "date": "{{today}}" }
+
+###
+
+@tempTaskId = {{createTempTask.response.body.$._id}}
+
+### 11.3 Delete the subject
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/subjects/{{tempSubjectId}}
+Authorization: Bearer {{token1}}
+
+### 11.4 The task must remain, but without the "subject" field
+# Expected: 200 "Temp task" is in the list and has no "subject" field
+GET {{baseUrl}}/api/tasks?date={{today}}
+Authorization: Bearer {{token1}}
+
+### 11.5 Delete the temporary task
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/tasks/{{tempTaskId}}
+Authorization: Bearer {{token1}}
+
+
+### ============ 12. CLEANUP (optional) ============
+
+### 12.1 Delete the Physics subject
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/subjects/{{physicsId}}
+Authorization: Bearer {{token1}}
+
+### 12.2 Delete the Mathematics subject
+# Expected: 200 {"ok":true}
+DELETE {{baseUrl}}/api/subjects/{{subjectId}}
+Authorization: Bearer {{token1}}
