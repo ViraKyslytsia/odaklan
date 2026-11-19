@@ -1,0 +1,71 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font);
+    font-size: var(--fs-md);
+    color: var(--text);
+    background-color: var(--bg);
+    background-image:
+        radial-gradient(ellipse 60% 50% at 10% 0%, var(--bg-glow-purple), transparent 70%),
+        radial-gradient(ellipse 50% 40% at 100% 100%, var(--bg-glow-teal), transparent 70%);
+    background-attachment: fixed;
+}
+
+button,
+input {
+    font: inherit;
+    color: inherit;
+}
+
+a {
+    color: var(--text-muted);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-5);
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+}
+
+.btn {
+    border: 0;
+    cursor: pointer;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: var(--fs-lg);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: #fff;
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

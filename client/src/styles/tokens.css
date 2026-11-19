@@ -1,0 +1,50 @@
+:root {
+    /* Фон и поверхности */
+    --bg: #0a0912;
+    --bg-glow-purple: rgba(94, 44, 170, 0.45);
+    --bg-glow-teal: rgba(14, 116, 144, 0.4);
+    --surface: #171622;
+    --surface-2: #211f30;
+    --surface-3: #2c2942;
+    --border: rgba(255, 255, 255, 0.08);
+
+    /* Текст */
+    --text: #eeeafb;
+    --text-muted: #b5a8ee;
+    --text-dim: #8f86b8;
+
+    /* Акценты */
+    --primary: #7c3aed;
+    --primary-soft: #a78bfa;
+    --teal: #2dd4bf;
+    --orange: #fb923c;
+    --danger: #f87171;
+    --success: #34d399;
+    --gradient-primary: linear-gradient(90deg, #7c3aed 0%, #0e91b5 100%);
+
+    /* Шрифт */
+    --font: 'Space Grotesk Variable', system-ui, sans-serif;
+    --fs-sm: 0.875rem;
+    --fs-md: 1rem;
+    --fs-lg: 1.25rem;
+    --fs-xl: 1.75rem;
+    --fs-timer: 5.5rem;
+
+    /* Скругления */
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 32px;
+    --radius-pill: 999px;
+
+    /* Отступы */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+
+    /* Тени */
+    --shadow-glow: 0 8px 30px rgba(124, 58, 237, 0.35);
+}
