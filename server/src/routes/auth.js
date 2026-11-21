@@ -29,8 +29,8 @@ function sentRecently(user) {
     return Boolean(user.codeSentAt) && Date.now() - user.codeSentAt.getTime() < RESEND_COOLDOWN_MS;
 }
 
-function createToken(userId) {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '30d' });
+function createToken(userId, expiresIn = '30d') {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn });
 }
 
 async function issueCode(user) {
@@ -124,7 +124,7 @@ router.post('/verify', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, remember } = req.body;
         if (!isStr(email) || !isStr(password)) {
             return res.status(401).json({ error: 'Wrong email or password' });
         }
@@ -137,7 +137,8 @@ router.post('/login', async (req, res) => {
             return res.status(403).json({ error: 'Email is not verified' });
         }
 
-        res.json({ token: createToken(user.id) });
+        const expiresIn = remember ? '30d' : '1d';
+        res.json({ token: createToken(user.id, remember ===false ? '1d' : '30d') });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
