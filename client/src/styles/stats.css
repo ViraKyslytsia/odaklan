@@ -1,0 +1,282 @@
+.stats-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.stats-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+.stats-controls .segmented {
+    flex-wrap: wrap;
+}
+
+.stats-subtitle {
+    margin: var(--space-3) 0 0;
+    font-size: var(--fs-lg);
+    color: var(--text-strong);
+}
+
+.stat-sub {
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+}
+
+.stats-card .exam-stat-tiles {
+    margin-bottom: 0;
+}
+
+/* переключатель месяца / года */
+.stats-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+}
+
+.stats-nav-title {
+    min-width: 180px;
+    text-align: center;
+    font-size: var(--fs-lg);
+    color: var(--text-strong);
+    text-transform: capitalize;
+}
+
+.stats-arrow {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.stats-arrow:hover:not(:disabled) {
+    background: var(--surface-3);
+    color: var(--text-strong);
+}
+
+.stats-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+/* сетка месяца */
+.month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-2);
+}
+
+.month-weekday {
+    text-align: center;
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+    text-transform: capitalize;
+}
+
+.month-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 76px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    color: #fff;
+}
+
+.month-cell.out {
+    visibility: hidden;
+}
+
+.month-cell.empty {
+    background: var(--surface-2);
+    color: var(--text-dim);
+    opacity: 0.6;
+}
+
+.month-cell.today {
+    border-color: var(--teal);
+    opacity: 1;
+}
+
+.month-day {
+    font-size: var(--fs-sm);
+}
+
+.month-time {
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+}
+
+/* строки со столбиками (месяцы и годы) */
+.bar-rows,
+.subject-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) 110px 72px;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.bar-row.future {
+    opacity: 0.4;
+}
+
+.bar-row.no-change {
+    grid-template-columns: 120px minmax(0, 1fr) 110px;
+}
+.bar-label {
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.bar-track {
+    height: 14px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    overflow: hidden;
+}
+
+.bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+    background: var(--gradient-primary);
+    transition: width 0.4s ease;
+}
+
+.bar-time {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-strong);
+}
+
+.bar-change {
+    position: relative;
+    justify-self: end;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    font-variant-numeric: tabular-nums;
+    outline: none;
+}
+
+.bar-change.up {
+    color: var(--success);
+}
+
+.bar-change.down {
+    color: var(--danger);
+}
+
+.bar-change.flat {
+    color: var(--text-dim);
+}
+
+/* подсказка с разницей во времени */
+.bar-change[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 6px);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-3);
+    color: var(--text-strong);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    z-index: 2;
+}
+
+.bar-change[data-tip]:hover::after,
+.bar-change[data-tip]:focus-visible::after {
+    opacity: 1;
+}
+
+/* разбивка по предметам */
+.subject-row {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr) auto 48px;
+    align-items: center;
+    column-gap: var(--space-3);
+    row-gap: var(--space-2);
+}
+
+.subject-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.subject-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-strong);
+}
+
+.subject-time {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-strong);
+}
+
+.subject-share {
+    text-align: right;
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+}
+
+.subject-bar {
+    grid-column: 2 / -1;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    overflow: hidden;
+}
+
+.subject-bar span {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+}
+
+@media (max-width: 640px) {
+    .bar-row {
+        grid-template-columns: 84px minmax(0, 1fr) 84px 56px;
+        gap: var(--space-2);
+    }
+        .bar-row.no-change {
+            grid-template-columns: 84px minmax(0, 1fr) 84px;
+        }
+    .month-grid {
+        gap: var(--space-1);
+    }
+
+    .month-cell {
+        min-height: 56px;
+        padding: var(--space-1) var(--space-2);
+    }
+
+    .month-time {
+        font-size: var(--fs-sm);
+    }
+}

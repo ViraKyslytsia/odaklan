@@ -6,7 +6,6 @@ import Logo from './Logo';
 const NAV_ITEMS = [
     { to: '/', labelKey: 'nav.home', end: true },
     { to: '/tasks', labelKey: 'nav.tasks' },
-    { to: '/calendar', labelKey: 'nav.calendar' },
     { to: '/stats', labelKey: 'nav.stats' },
     { to: '/exams', labelKey: 'nav.exams' },
     { to: '/music', labelKey: 'nav.music' },

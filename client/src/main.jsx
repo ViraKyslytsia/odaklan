@@ -10,6 +10,7 @@ import './styles/exams.css';
 import './styles/lang.css';
 import './styles/dialogs.css';
 import './styles/tasks.css';
+import './styles/stats.css';
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { LanguageProvider } from './i18n/LanguageContext.jsx';
