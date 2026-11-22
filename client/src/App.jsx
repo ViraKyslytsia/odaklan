@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Placeholder from './pages/Placeholder';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
+import Schedule from './pages/Schedule.jsx';
 import Stats from './pages/Stats';
 import Tasks from './pages/Tasks';
 import Verify from './pages/Verify';
@@ -22,6 +23,7 @@ export default function App() {
 
         <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route path="/" element={<Home />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/calendar" element={<Navigate to="/stats" replace />} />
           <Route path="/stats" element={<Stats />} />

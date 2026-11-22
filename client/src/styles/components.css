@@ -225,3 +225,92 @@ display: flex;
     accent-color: var(--primary);
     cursor: pointer;
 }
+.profile-card {
+    max-width: 480px;
+}
+
+.profile-ok {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin: 6px 0 0;
+}
+.region-current {
+    margin: 0 0 8px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.region-hint {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.region-picker {
+    margin-bottom: 24px;
+}
+
+.region-results {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    border: 1px solid var(--border, rgba(127, 127, 127, 0.3));
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.region-results button {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.profile-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-row .input {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-row-value {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.region-results button:hover {
+    background: rgba(127, 127, 127, 0.12);
+}
+
+.region-results span {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+.input.profile-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.input.profile-box.profile-box-tall {
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+.profile-row-value small {
+    display: block;
+    margin-top: 6px;
+    color: var(--text);
+    font-size: 13px;
+}

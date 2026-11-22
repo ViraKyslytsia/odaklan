@@ -1,0 +1,159 @@
+/* ---------- Страница «Расписание» ---------- */
+.schedule-scroll {
+    overflow-x: auto;
+    padding-bottom: var(--space-2);
+}
+
+.schedule {
+    min-width: 640px;
+    display: grid;
+    grid-template-columns: 52px repeat(var(--days), minmax(0, 1fr));
+    column-gap: var(--space-2);
+}
+
+.schedule-head {
+    padding: var(--space-2) 0;
+    text-align: center;
+    font-weight: var(--fw-medium);
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.schedule-head.today {
+    color: var(--text-strong);
+}
+
+.schedule-hours {
+    position: relative;
+    height: calc(var(--hours) * var(--hour-h));
+}
+
+.schedule-hour {
+    position: absolute;
+    top: calc(var(--i) * var(--hour-h));
+    right: var(--space-2);
+    transform: translateY(-1px);
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+}
+
+.schedule-col {
+    position: relative;
+    height: calc(var(--hours) * var(--hour-h));
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.schedule-col.today {
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+    border-color: color-mix(in srgb, var(--primary-soft) 40%, transparent);
+}
+
+.schedule-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--i) * var(--hour-h));
+    border-top: 1px solid var(--border);
+    pointer-events: none;
+}
+
+.schedule-block {
+    --c: var(--primary-soft);
+    position: absolute;
+    top: calc(var(--top) * var(--hour-h) + 1px);
+    height: calc(var(--h) * var(--hour-h) - 3px);
+    left: calc(var(--lane) * 100% / var(--lanes) + 3px);
+    width: calc(100% / var(--lanes) - 6px);
+    padding: 6px 8px;
+    overflow: hidden;
+    border: 0;
+    border-left: 3px solid var(--c);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--c) 28%, var(--surface));
+    color: var(--text-strong);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.schedule-block:hover {
+    background: color-mix(in srgb, var(--c) 40%, var(--surface));
+}
+
+.schedule-block-title {
+    display: block;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-medium);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.schedule-block-meta {
+    display: block;
+    margin-top: 2px;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+}
+
+/* красная линия «сейчас» в сегодняшней колонке */
+.schedule-now {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--top) * var(--hour-h));
+    border-top: 2px solid var(--danger);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.schedule-now::before {
+    content: '';
+    position: absolute;
+    left: -1px;
+    top: -5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+}
+
+.schedule-foot {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--space-3);
+}
+
+/* ---------- Окно занятия ---------- */
+.day-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.day-chip {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    color: var(--text);
+    font: inherit;
+    font-size: var(--fs-md);
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.day-chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.schedule-times {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
