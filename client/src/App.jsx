@@ -1,31 +1,36 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
+import ErrorBoundary from './components/ErrorBoundary';
 import { GuestRoute, ProtectedRoute } from './components/RouteGuards';
+import Exams from './pages/Exams';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Placeholder from './pages/Placeholder';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
+import Tasks from './pages/Tasks';
 import Verify from './pages/Verify';
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
-      <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
-      <Route path="/verify" element={<GuestRoute><Verify /></GuestRoute>} />
+    <ErrorBoundary>
+      <Routes>
+        <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+        <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+        <Route path="/verify" element={<GuestRoute><Verify /></GuestRoute>} />
 
-      <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-        <Route path="/" element={<Home />} />
-        <Route path="/tasks" element={<Placeholder title="Görevler" />} />
-        <Route path="/calendar" element={<Placeholder title="Takvim" />} />
-        <Route path="/stats" element={<Placeholder title="İstatistik" />} />
-        <Route path="/exams" element={<Placeholder title="Sınavlar" />} />
-        <Route path="/music" element={<Placeholder title="Müzik" />} />
-        <Route path="/profile" element={<Profile />} />
-      </Route>
+        <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+          <Route path="/" element={<Home />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/calendar" element={<Placeholder titleKey="nav.calendar" />} />
+          <Route path="/stats" element={<Placeholder titleKey="nav.stats" />} />
+          <Route path="/exams" element={<Exams />} />
+          <Route path="/music" element={<Placeholder titleKey="nav.music" />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }

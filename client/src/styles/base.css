@@ -33,9 +33,9 @@ a {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 0 auto;
-    padding: var(--space-5);
+    padding: var(--space-5) var(--space-7);
 }
 
 .card {

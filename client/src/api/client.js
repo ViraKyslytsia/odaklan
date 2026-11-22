@@ -12,6 +12,7 @@ export const setToken = (token, remember = true) => {
 export const clearToken = () => {
     localStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem('odaklan_name');
 };
 
 export class ApiError extends Error {
@@ -47,7 +48,8 @@ export async function request(path, { method = 'GET', body, auth = true } = {}) 
             clearToken();
             window.dispatchEvent(new Event('auth:logout'));
         }
-        throw new ApiError(data?.error || 'Request failed', res.status);
+        // если сервер не ответил JSON-ом (обычно он просто не запущен), показываем код ответа
+        throw new ApiError(data?.error || `Request failed (${res.status})`, res.status);
     }
 
     return data;

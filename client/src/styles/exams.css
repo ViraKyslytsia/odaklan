@@ -1,0 +1,581 @@
+/* ---------- Страница «Экзамены» ---------- */
+.page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.page-head h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+}
+
+.btn-sm {
+    padding: 10px var(--space-4);
+    font-size: var(--fs-md);
+    border-radius: var(--radius-sm);
+}
+
+.field-hint {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+}
+
+select.input {
+    font: inherit;
+    color: var(--text-strong);
+    appearance: none;
+    padding-right: 44px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b5a8ee' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+}
+
+/* раскрытый список: тёмный фон и шрифт сайта вместо системных */
+select.input option {
+    font-family: var(--font);
+    font-size: var(--fs-md);
+    padding: 10px 14px;
+    background: var(--surface-2);
+    color: var(--text-strong);
+}
+
+select.input option:checked {
+    background: linear-gradient(var(--primary), var(--primary));
+    color: #fff;
+}
+
+input[type='date'].input,
+input[type='time'].input {
+    color-scheme: dark;
+}
+
+.exam-section {
+    margin-top: var(--space-6);
+}
+
+/* ---------- Пустое состояние ---------- */
+.exam-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-7) var(--space-5);
+    text-align: center;
+}
+
+.exam-empty h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    color: var(--text-strong);
+}
+
+.exam-empty p {
+    margin: 0 0 var(--space-3);
+    color: var(--text-muted);
+}
+
+/* ---------- Живой отсчёт ---------- */
+.exam-hero {
+    --exam-color: var(--primary-soft);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    border-color: color-mix(in srgb, var(--exam-color) 45%, transparent);
+    background:
+        radial-gradient(ellipse 70% 120% at 0% 0%, color-mix(in srgb, var(--exam-color) 22%, transparent), transparent 70%),
+        var(--surface);
+}
+
+.exam-hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.exam-hero-label {
+    font-size: var(--fs-sm);
+    letter-spacing: 0.16em;
+    color: var(--exam-color);
+    font-weight: var(--fw-medium);
+}
+
+.exam-hero-title {
+    margin: var(--space-1) 0;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+}
+
+.exam-hero-date {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--fs-lg);
+}
+
+.exam-hero-date::first-letter,
+.exam-card-date::first-letter {
+    text-transform: uppercase;
+}
+
+.exam-subject-tag {
+    color: var(--exam-color);
+    font-weight: var(--fw-medium);
+}
+
+.countdown {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+.countdown-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-2);
+    background: color-mix(in srgb, var(--exam-color) 10%, var(--surface-2));
+    border: 1px solid color-mix(in srgb, var(--exam-color) 25%, transparent);
+    border-radius: var(--radius-md);
+}
+
+.countdown-num {
+    font-size: clamp(2rem, 7vw, 4.25rem);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    font-variant-numeric: tabular-nums;
+}
+
+.countdown-unit {
+    font-size: var(--fs-sm);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* ---------- Карточки экзаменов ---------- */
+.exam-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+    gap: var(--space-5);
+    align-items: start;
+}
+
+.exam-card {
+    --exam-color: var(--primary-soft);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    border-top: 3px solid var(--exam-color);
+}
+
+.exam-card.finished {
+    opacity: 0.75;
+}
+
+.exam-card-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.exam-dot {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--exam-color);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--exam-color) 70%, transparent);
+}
+
+.exam-card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.exam-card-title {
+    margin: 0;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-bold);
+    color: var(--text-strong);
+    overflow-wrap: anywhere;
+}
+
+.exam-card-date {
+    margin: 2px 0 0;
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+}
+
+.exam-card-clock {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.exam-mini-countdown {
+    font-size: 1.375rem;
+    font-weight: var(--fw-bold);
+    color: var(--exam-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.exam-finished-badge {
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+}
+
+.exam-progress-text {
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.exam-progress {
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    overflow: hidden;
+}
+
+.exam-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--exam-color);
+    transition: width 0.4s ease;
+}
+
+.exam-checklist-title {
+    margin: var(--space-2) 0 0;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.exam-tasks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.exam-task {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+}
+
+.exam-task .task-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+}
+
+.exam-task .task-title {
+    font-size: var(--fs-md);
+    overflow-wrap: anywhere;
+}
+
+.task-date {
+    flex-shrink: 0;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+}
+
+.task-date.today {
+    background: color-mix(in srgb, var(--exam-color) 25%, transparent);
+    color: var(--text-strong);
+}
+
+.task-date.late {
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--danger);
+}
+
+.exam-task-del {
+    opacity: 0.5;
+}
+
+.exam-task:hover .exam-task-del,
+.exam-task-del:focus-visible {
+    opacity: 1;
+}
+
+.exam-task-form {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.exam-task-form .input {
+    padding: 10px var(--space-3);
+    border-radius: var(--radius-sm);
+    min-width: 0;
+}
+
+.exam-task-form .exam-task-date {
+    width: auto;
+    flex-shrink: 0;
+}
+
+.exam-task-form .btn {
+    flex-shrink: 0;
+    padding: 0 var(--space-4);
+    font-size: 1.25rem;
+}
+
+/* ---------- Окно экзамена ---------- */
+.exam-modal {
+    width: min(100%, 480px);
+    max-height: calc(100vh - 2 * var(--space-5));
+    overflow-y: auto;
+}
+
+.exam-when {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-3);
+}
+
+.exam-delete {
+    display: block;
+    margin: var(--space-4) auto 0;
+    color: var(--danger);
+    font-size: var(--fs-sm);
+}
+
+/* ---------- Статистика ---------- */
+.exam-stats {
+    margin-top: var(--space-7);
+}
+
+.exam-stats-controls {
+    display: flex;
+    margin-bottom: var(--space-4);
+}
+
+.exam-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+}
+
+.chip {
+    --chip-color: var(--primary-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.chip::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--chip-color);
+}
+
+.chip.active {
+    background: color-mix(in srgb, var(--chip-color) 20%, transparent);
+    border-color: var(--chip-color);
+    color: var(--text-strong);
+}
+
+.exam-stat-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.stat-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+}
+
+.stat-label {
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: var(--fw-bold);
+    color: var(--text-strong);
+    font-variant-numeric: tabular-nums;
+}
+
+.exam-stats-note {
+    margin: var(--space-3) 0 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--fs-sm);
+}
+
+.chart {
+    position: relative;
+    width: 100%;
+}
+
+.chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    touch-action: pan-y;
+}
+
+.chart-grid {
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.chart-tick {
+    fill: var(--text-dim);
+    font-size: 12px;
+    font-family: var(--font);
+}
+
+.chart-line {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: chart-draw 0.9s ease-out forwards;
+}
+
+.chart-area {
+    animation: fade-in 0.9s ease-out both;
+}
+
+.chart-cursor {
+    stroke: var(--text-dim);
+    stroke-width: 1;
+    stroke-dasharray: 3 4;
+}
+
+.chart-dot {
+    stroke: var(--surface);
+    stroke-width: 2;
+}
+
+.chart-tip {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    font-size: var(--fs-sm);
+    color: var(--text-muted);
+    white-space: nowrap;
+    pointer-events: none;
+    transform: translate(var(--shift, -50%), calc(-100% - 12px));
+}
+
+.chart-tip strong {
+    color: var(--text-strong);
+}
+
+.chart-skeleton {
+    height: 260px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    animation: skeleton 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes chart-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes skeleton {
+    from {
+        opacity: 0.4;
+    }
+
+    to {
+        opacity: 0.8;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chart-line {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+
+    .chart-area {
+        animation: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .exam-hero-top {
+        flex-direction: column;
+    }
+
+    .exam-when {
+        grid-template-columns: 1fr;
+    }
+
+    .exam-task-form {
+        flex-wrap: wrap;
+    }
+
+    .exam-task-form .input:first-child {
+        flex-basis: 100%;
+    }
+
+    .exam-task-form .exam-task-date {
+        flex: 1;
+    }
+}

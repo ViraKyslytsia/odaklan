@@ -1,6 +1,7 @@
+import { Link } from 'react-router-dom';
 export default function Logo({ size = 56 }) {
     return (
-        <div className="brand" style={{ '--logo-size': `${size}px` }}>
+        <Link to="/" className="brand" style={{ '--logo-size': `${size}px` }}>
             <span className="brand-mark">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path
@@ -10,6 +11,6 @@ export default function Logo({ size = 56 }) {
                 </svg>
             </span>
             <span className="brand-name">odaklan</span>
-        </div>
+        </Link>
     );
 }

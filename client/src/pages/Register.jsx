@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import AuthLayout from '../components/AuthLayout';
+import { useT } from '../i18n/LanguageContext';
 import { setPendingEmail } from '../utils/pendingEmail';
 
 export default function Register() {
+    const { t } = useT();
     const navigate = useNavigate();
     const [form, setForm] = useState({ name: '', email: '', password: '' });
     const [error, setError] = useState('');
@@ -17,7 +19,7 @@ export default function Register() {
         setError('');
 
         if (form.password.length < 6) {
-            setError('Şifre en az 6 karakter olmalı');
+            setError(t('register.passwordMin'));
             return;
         }
 
@@ -35,33 +37,33 @@ export default function Register() {
     }
 
     return (
-        <AuthLayout title="Kayıt ol" subtitle="Hesabını oluştur, e-postana kod göndereceğiz.">
+        <AuthLayout title={t('register.title')} subtitle={t('register.subtitle')}>
             <form onSubmit={onSubmit}>
                 <div className="field">
-                    <label htmlFor="name">Ad</label>
+                    <label htmlFor="name">{t('field.name')}</label>
                     <input id="name" name="name" className="input" value={form.name}
                         onChange={onChange} autoComplete="name" required />
                 </div>
                 <div className="field">
-                    <label htmlFor="email">E-posta</label>
+                    <label htmlFor="email">{t('field.email')}</label>
                     <input id="email" name="email" type="email" className="input" value={form.email}
                         onChange={onChange} autoComplete="username" required />
                 </div>
                 <div className="field">
-                    <label htmlFor="password">Şifre</label>
+                    <label htmlFor="password">{t('field.password')}</label>
                     <input id="password" name="password" type="password" className="input"
                         value={form.password} onChange={onChange} autoComplete="new-password"
-                        placeholder="En az 6 karakter" required />
+                        placeholder={t('register.passwordHint')} required />
                 </div>
 
                 {error && <p className="form-error">{error}</p>}
 
                 <button className="btn btn-primary btn-block" disabled={loading}>
-                    {loading ? 'Gönderiliyor...' : 'Kod gönder'}
+                    {loading ? t('register.loading') : t('register.submit')}
                 </button>
             </form>
             <p className="auth-footer">
-                Zaten hesabın var mı? <Link to="/login">Giriş yap</Link>
+                {t('register.haveAccount')} <Link to="/login">{t('register.toLogin')}</Link>
             </p>
         </AuthLayout>
     );

@@ -1,0 +1,810 @@
+.home-grid {
+    display: grid;
+    grid-template-columns: 1.36fr 1fr;
+    gap: var(--space-6);
+    align-items: start;
+}
+
+.home-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+/* ---------- Таймер ---------- */
+.timer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-6) var(--space-6) var(--space-5);
+}
+
+.segmented {
+    display: inline-flex;
+    padding: var(--space-1);
+    background: var(--surface-2);
+    border-radius: var(--radius-md);
+}
+
+.segmented button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 10px 22px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: var(--fs-lg);
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.segmented button.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+.ring {
+    position: relative;
+    width: min(100%, 340px);
+    aspect-ratio: 1;
+}
+
+.ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.ring-track,
+.ring-progress {
+    fill: none;
+    stroke-width: 12;
+}
+
+.ring-track {
+    stroke: var(--surface-3);
+}
+
+.ring-progress {
+    stroke: url(#ring-gradient);
+    stroke-linecap: round;
+transition: stroke-dashoffset 1s linear;
+}
+.ring-progress.at-start {
+    transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1);}
+
+.ring-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.ring-label {
+    font-size: var(--fs-sm);
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+}
+
+.ring-time {
+    font-size: var(--fs-timer);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    font-variant-numeric: tabular-nums;
+}
+
+.subject-select {
+    max-width: 280px;
+}
+
+.timer-actions {
+    display: flex;
+    flex-wrap: wrap;
+        justify-content: center;
+    gap: var(--space-3);
+}
+
+/* Анимация окончания: большая звезда по центру круга, запускается сама */
+.celebrating .ring-label {
+    color: var(--teal);
+}
+
+.ring .star-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    /* не мешает кликам под ней */
+}
+
+.ring .star-big {
+    width: 70%;
+    height: 70%;
+    opacity: 0;
+    transform: scale(0);
+    filter: drop-shadow(0 0 40px rgba(124, 58, 237, 0.75));
+    animation: star-finish 2.6s ease-in-out forwards;
+}
+
+@keyframes star-finish {
+    0% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+    }
+
+    25% {
+        transform: scale(1) rotate(200deg);
+        opacity: 1;
+    }
+
+    75% {
+        transform: scale(1.15) rotate(520deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.8) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* Для тех, кто отключил анимации в системе: звезда просто мягко появляется и исчезает */
+@media (prefers-reduced-motion: reduce) {
+    .ring .star-big {
+        animation: star-fade 2.6s ease-in-out forwards;
+        transform: scale(1);
+    }
+
+    @keyframes star-fade {
+
+        0%,
+        100% {
+            opacity: 0;
+        }
+
+        30%,
+        70% {
+            opacity: 1;
+        }
+    }
+}
+
+/* ---------- Задачи ---------- */
+.section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.section-head h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+}
+
+.section-count {
+    font-size: var(--fs-md);
+    font-weight: var(--fw-regular);
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+.task-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.task-item.empty {
+    color: var(--text-muted);
+    font-size: var(--fs-md);
+    font-weight: var(--fw-regular);
+}
+
+.task-item.empty a {
+    font-weight: var(--fw-medium);
+}
+
+.task-check {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid var(--task-color);
+    border-radius: 8px;
+}
+
+.task-check.checked {
+    background: var(--task-color);
+}
+
+.task-title {
+    flex: 1;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-medium);
+    color: var(--text);
+}
+
+.task-tag {
+    color: var(--task-color);
+    font-weight: var(--fw-medium);
+    font-size: var(--fs-sm);
+}
+
+.task-title.done {
+    color: var(--text-dim);
+    text-decoration: line-through;
+}
+
+
+
+/* ---------- Маленькие карточки ---------- */
+.quick-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.mini-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text);
+}
+
+.mini-card:hover {
+    border-color: var(--primary-soft);
+}
+
+.mini-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    font-weight: var(--fw-medium);
+    color: var(--text-dim);
+}
+
+.mini-text {
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-medium);
+    color: var(--text);
+}
+
+@media (max-width: 900px) {
+    .home-grid {
+        grid-template-columns: 1fr;
+    }
+
+    :root {
+        --fs-timer: 3.5rem;
+    }
+}
+
+.timer-actions .btn {
+    min-width: 120px;
+}
+
+/* ---------- Окно настроек ---------- */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: var(--space-5);
+    background: rgba(5, 4, 12, 0.7);
+    backdrop-filter: blur(6px);
+    animation: fade-in 0.15s ease-out;
+}
+
+.modal {
+    width: min(100%, 460px);
+    padding: var(--space-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.modal-title {
+    margin: 0 0 var(--space-5);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+}
+
+.setting-row {
+    margin-bottom: var(--space-5);
+}
+
+.setting-row>label,
+.switch-title {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--fs-md);
+    font-weight: var(--fw-medium);
+}
+
+.range-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.range {
+    flex: 1;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+.setting-hint {
+    color: var(--text-dim);
+    font-weight: var(--fw-regular);
+    font-size: var(--fs-sm);
+}
+
+.range-input {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+}
+
+.range-input:focus-within {
+    border-color: var(--primary-soft);
+}
+
+.range-input input {
+    width: 44px;
+    padding: var(--space-2) 0;
+    background: transparent;
+    border: 0;
+    outline: none;
+    text-align: right;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.switch-title {
+    margin-bottom: 2px;
+}
+
+.switch-note {
+    display: block;
+    font-size: var(--fs-sm);
+    color: var(--text-dim);
+}
+
+.switch {
+    position: relative;
+    width: 50px;
+    height: 28px;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.switch span {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s;
+}
+
+.switch.on {
+    background: var(--primary);
+}
+
+.switch.on span {
+    transform: translateX(22px);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+}
+
+.modal-actions .btn {
+    flex: 1;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+/* ---------- Плавный переход фокус ↔ перерыв ---------- */
+.timer-card {
+    --ring-a: var(--primary);
+    --ring-b: #0e91b5;
+}
+
+.timer-card.is-break {
+    --ring-a: #0e91b5;
+    --ring-b: var(--teal);
+}
+
+.ring-stop-a {
+    stop-color: var(--ring-a);
+    transition: stop-color 0.9s ease;
+}
+
+.ring-stop-b {
+    stop-color: var(--ring-b);
+    transition: stop-color 0.9s ease;
+}
+
+/* скользящая плашка в переключателе */
+.segmented-slide {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: repeat(var(--count, 2), 1fr);
+}
+
+.segmented-slide::before {
+    content: '';
+    position: absolute;
+    top: var(--space-1);
+    bottom: var(--space-1);
+    left: var(--space-1);
+    width: calc((100% - 2 * var(--space-1)) / var(--count, 2));
+    border-radius: var(--radius-sm);
+background: var(--ring-a, var(--primary));
+    transform: translateX(calc(var(--seg) * 100%));
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.9s ease;
+}
+
+.segmented-slide button {
+    position: relative;
+    z-index: 1;
+}
+
+.segmented-slide button.active {
+    background: transparent;
+}
+
+/* надпись и время мягко проявляются при смене этапа */
+.ring-label,
+.ring-time {
+    animation: ring-text-in 0.6s ease both;
+}
+
+@keyframes ring-text-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.subject-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    width: 100%;
+    margin-top: calc(var(--space-5) * -1);
+    opacity: 0;
+    visibility: hidden;
+    transition: grid-template-rows 0.5s ease, margin-top 0.5s ease, opacity 0.4s ease, visibility 0s linear 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ring-progress,
+    .ring-stop-a,
+    .ring-stop-b,
+    .segmented-slide::before,
+    .subject-wrap {
+        transition: none;
+    }
+
+    .ring-label,
+    .ring-time {
+        animation: none;
+    }
+}
+/* ---------- Список предметов ---------- */
+.subject-list {
+    padding: var(--space-5) var(--space-5) var(--space-4);
+}
+
+.subject-total {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    /* справа тот же отступ, что у строк предметов (отступ кнопки + зазор + точки + отступ строки),
+       чтобы «Всего» стояло ровно над временем предметов */
+    padding: 0 calc(var(--space-3) + var(--space-2) * 2 + 36px) var(--space-3) var(--space-3);
+    color: var(--text-muted);
+    font-size: var(--fs-lg);
+}
+
+.subject-total>span:first-child {
+    flex: 1;
+}
+
+.subject-clock {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+.dots-btn {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dots-btn:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.subject-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* строка предмета: кнопка «играть» + рядом кнопка с тремя точками */
+.subject-entry {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-right: var(--space-2);
+    border-radius: var(--radius-md);
+    transition: background-color 0.25s ease;
+}
+
+.subject-entry:hover {
+    background: var(--surface-2);
+}
+
+.subject-entry.active {
+    background: color-mix(in srgb, var(--subject-color) 14%, var(--surface));
+}
+
+.subject-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-3);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text);
+    font-size: var(--fs-lg);
+    text-align: left;
+    cursor: pointer;
+}
+
+/* внутри строки фон у точек чуть темнее, чтобы hover был заметен */
+.subject-entry .dots-btn:hover {
+    background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+.subject-play {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--subject-color);
+    color: color-mix(in srgb, var(--subject-color) 22%, #000);
+    transition: transform 0.2s ease;
+}
+
+.subject-item:hover .subject-play {
+    transform: scale(1.06);
+}
+
+.subject-play svg {
+    width: 20px;
+    height: 20px;
+}
+
+.subject-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.subject-add {
+    width: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-3);
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--fs-md);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.subject-add:hover {
+    color: var(--text);
+    border-color: var(--primary-soft);
+}
+/* ---------- Окно предметов и палитра ---------- */
+.subject-rows {
+    max-height: min(40vh, 360px);
+    margin-bottom: var(--space-4);
+    overflow-y: auto;
+}
+
+.subject-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.subject-row-top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.subject-row-top .input {
+    flex: 1;
+    min-width: 0;
+}
+
+.subject-row-top .btn {
+    padding: 12px 18px;
+    font-size: var(--fs-md);
+    white-space: nowrap;
+}
+
+.icon-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.icon-btn:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.subject-new {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-top: var(--space-3);
+}
+
+.subject-new-title {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--fs-md);
+    font-weight: var(--fw-medium);
+}
+
+.palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.swatch {
+    width: 26px;
+    height: 26px;
+    background: var(--swatch);
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.swatch:hover {
+    transform: scale(1.12);
+}
+
+.swatch.selected {
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--swatch);
+}
+/* ---------- Приветствие ---------- */
+.greeting {
+    margin-bottom: var(--space-5);
+}
+
+.greeting-title {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: var(--fw-bold);
+    letter-spacing: -0.02em;
+    color: var(--text-strong);
+    animation: ring-text-in 0.6s ease both;
+}
+
+.greeting-date {
+    margin: var(--space-1) 0 0;
+    font-size: var(--fs-lg);
+    color: var(--text-muted);
+}
+
+/* первая буква даты заглавная: «суббота» → «Суббота» */
+.greeting-date::first-letter {
+    text-transform: uppercase;
+}

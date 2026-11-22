@@ -1,0 +1,77 @@
+/* ---------- Переключатель языка ---------- */
+.lang-menu {
+    position: fixed;
+    top: var(--space-5);
+    right: var(--space-5);
+    z-index: 50;
+}
+
+.lang-trigger {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: var(--fs-md);
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+}
+
+.lang-trigger:hover {
+    border-color: var(--primary-soft);
+    color: var(--text);
+}
+
+.lang-trigger svg {
+    width: 18px;
+    height: 18px;
+}
+
+.lang-list {
+    position: absolute;
+    top: calc(100% + var(--space-2));
+    right: 0;
+    min-width: 120px;
+    margin: 0;
+    padding: var(--space-2);
+    list-style: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.lang-option {
+    width: 100%;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: var(--fs-md);
+    text-align: left;
+    cursor: pointer;
+}
+
+.lang-option:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.lang-option.active {
+    background: var(--primary);
+    color: #fff;
+}
+/* ---------- Плавная смена языка: слова проявляются на своих местах ---------- */
+html.lang-anim body *:not(svg):not(svg *):not(input):not(textarea):not(.brand-mark):not(.brand-mark *):not(.ring-time):not(.star-overlay *) {
+    animation: lang-text-in 0.6s ease;
+}
+
+@keyframes lang-text-in {
+    from {
+        color: transparent;
+    }
+}

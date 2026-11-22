@@ -26,16 +26,19 @@
 
     /* Шрифт */
     --font: 'Space Grotesk Variable', system-ui, sans-serif;
-    --fs-sm: 0.875rem;
-    --fs-md: 1rem;
-    --fs-lg: 1.25rem;
-    --fs-xl: 1.75rem;
-    --fs-timer: 5.5rem;
+    --fs-sm: 0.8125rem;
+        --fs-md: 0.9375rem;
+        --fs-lg: 1.0625rem;
+        --fs-xl: 1.5rem;
+        --fs-timer: 4.5rem;
+            --fw-regular: 400;
+                --fw-medium: 500;
+                --fw-bold: 700;
 
     /* Скругления */
     --radius-sm: 12px;
-    --radius-md: 20px;
-    --radius-lg: 32px;
+    --radius-md: 22px;
+    --radius-lg: 40px;
     --radius-pill: 999px;
 
     /* Отступы */

@@ -1,0 +1,155 @@
+/* ---------- Страница «Задачи» ---------- */
+.daynav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.daynav-arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: var(--surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.daynav-arrow:hover {
+    color: var(--text-strong);
+    border-color: var(--primary-soft);
+}
+
+.daynav-date {
+    width: auto;
+    min-width: 220px;
+}
+
+.daynav-today {
+    margin-left: auto;
+}
+
+.task-add {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.task-add-row {
+    display: flex;
+    gap: var(--space-3);
+}
+
+.task-add-row .input {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-add .exam-chips {
+    margin: 0;
+}
+
+.tasks-day-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.today-badge {
+    padding: 2px 12px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--teal) 18%, transparent);
+    color: var(--teal);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0;
+}
+
+.tasks-progress {
+    height: 6px;
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    overflow: hidden;
+}
+
+.tasks-progress span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--gradient-primary);
+    transition: width 0.3s ease;
+}
+
+.tasks-empty {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.tasks-empty p {
+    margin: 0;
+}
+
+.task-list .task-title {
+    overflow-wrap: anywhere;
+}
+
+.task-edit {
+    flex: 1;
+    min-width: 0;
+    padding: 8px var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-lg);
+}
+
+.task-actions {
+    display: flex;
+    gap: var(--space-1);
+    opacity: 0.45;
+    transition: opacity 0.15s ease;
+}
+
+.task-item:hover .task-actions,
+.task-item:focus-within .task-actions {
+    opacity: 1;
+}
+
+.task-act {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.task-act:hover {
+    background: var(--surface-3);
+    color: var(--text-strong);
+}
+
+.task-act.danger:hover {
+    color: var(--danger);
+}
+
+@media (max-width: 560px) {
+    .task-add-row {
+        flex-direction: column;
+    }
+
+    .daynav-today {
+        margin-left: 0;
+        width: 100%;
+    }
+}

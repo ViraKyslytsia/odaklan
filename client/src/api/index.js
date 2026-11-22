@@ -35,12 +35,20 @@ export const api = {
     toggleSubtask: (examId, subId) =>
         request(`/api/exams/${examId}/subtasks/${subId}/toggle`, { method: 'PATCH' }),
     deleteExam: (id) => request(`/api/exams/${id}`, { method: 'DELETE' }),
-
+    addSubtask: (examId, data) => request(`/api/exams/${examId}/subtasks`, json('POST', data)),
+    updateSubtask: (examId, subId, data) =>
+        request(`/api/exams/${examId}/subtasks/${subId}`, json('PATCH', data)),
+    deleteSubtask: (examId, subId) =>
+        request(`/api/exams/${examId}/subtasks/${subId}`, { method: 'DELETE' }),
     // Сессии и статистика
     saveSession: (data) => request('/api/sessions', json('POST', data)),
     getDayStats: (date) => request(`/api/stats/day?date=${date}`),
     getRangeStats: (from, to) => request(`/api/stats/range?from=${from}&to=${to}`),
-
+    getSeries: (period, date, subjectIds) =>
+        request(
+            `/api/stats/series?period=${period}&date=${date}&tz=${new Date().getTimezoneOffset()}` +
+            `&subjects=${subjectIds.join(',')}`
+        ),
     // Расписание
     getSchedule: (day) => request(`/api/schedule${day ? `?day=${day}` : ''}`),
     createScheduleItem: (data) => request('/api/schedule', json('POST', data)),

@@ -4,8 +4,9 @@ import { api } from '../api';
 import AuthLayout from '../components/AuthLayout';
 import { useAuth } from '../context/AuthContext';
 import { setPendingEmail } from '../utils/pendingEmail';
-
+import { useT } from '../i18n/LanguageContext';
 export default function Login() {
+    const {t} = useT();
     const navigate = useNavigate();
     const { signIn } = useAuth();
     const [form, setForm] = useState({ email: '', password: '' });
@@ -40,15 +41,15 @@ export default function Login() {
     }
 
     return (
-        <AuthLayout title="Giriş yap" subtitle="Tekrar hoş geldin!">
+        <AuthLayout title={t('login.title')} subtitle={t('login.subtitle')}>
             <form onSubmit={onSubmit}>
                 <div className="field">
-                    <label htmlFor="email">E-posta</label>
+                    <label htmlFor="email">{t('field.email')}</label>
                     <input id="email" name="email" type="email" className="input" value={form.email}
                         onChange={onChange} autoComplete="username" required />
                 </div>
                 <div className="field">
-                    <label htmlFor="password">Şifre</label>
+                    <label htmlFor="password">{t('field.password')}</label>
                     <input id="password" name="password" type="password" className="input"
                         value={form.password} onChange={onChange} autoComplete="current-password"
                         required />
@@ -59,16 +60,16 @@ export default function Login() {
                         checked={remember}
                         onChange={(e) => setRemember(e.target.checked)}
                     />
-                    <span>Beni hatırla</span>
+                    <span>{t('login.remember')}</span>
                 </label>
                 {error && <p className="form-error">{error}</p>}
 
                 <button className="btn btn-primary btn-block" disabled={loading}>
-                    {loading ? 'Giriş yapılıyor...' : 'Giriş yap'}
+                    {loading ? t('login.loading') : t('login.submit')}
                 </button>
             </form>
             <p className="auth-footer">
-                Hesabın yok mu? <Link to="/register">Kayıt ol</Link>
+                {t('login.noAccount')} <Link to="/register">{t('login.toRegister')}</Link>
             </p>
         </AuthLayout>
     );

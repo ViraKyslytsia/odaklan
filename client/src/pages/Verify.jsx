@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import AuthLayout from '../components/AuthLayout';
 import { useAuth } from '../context/AuthContext';
+import { useT } from '../i18n/LanguageContext';
 import { clearPendingEmail, getPendingEmail } from '../utils/pendingEmail';
 
 const RESEND_SECONDS = 60;
@@ -10,6 +11,7 @@ const RESEND_SECONDS = 60;
 export default function Verify() {
     const navigate = useNavigate();
     const { signIn } = useAuth();
+    const { t } = useT();
     const email = getPendingEmail();
 
     const [code, setCode] = useState('');
@@ -48,7 +50,7 @@ export default function Verify() {
         setInfo('');
         try {
             await api.resend({ email });
-            setInfo('Yeni kod gönderildi');
+            setInfo(t('verify.resent'));
             setCooldown(RESEND_SECONDS);
         } catch (err) {
             setError(err.message);
@@ -56,7 +58,7 @@ export default function Verify() {
     }
 
     return (
-        <AuthLayout title="Kodu gir" subtitle={`6 haneli kodu ${email} adresine gönderdik.`}>
+        <AuthLayout title={t('verify.title')} subtitle={t('verify.subtitle', { email })}>
             <form onSubmit={onSubmit}>
                 <div className="field">
                     <input
@@ -74,12 +76,12 @@ export default function Verify() {
                 {info && <p className="form-note">{info}</p>}
 
                 <button className="btn btn-primary btn-block" disabled={loading || code.length !== 6}>
-                    {loading ? 'Kontrol ediliyor...' : 'Onayla'}
+                    {loading ? t('verify.loading') : t('verify.submit')}
                 </button>
             </form>
             <p className="auth-footer">
                 <button className="link-button" onClick={onResend} disabled={cooldown > 0}>
-                    {cooldown > 0 ? `Kodu tekrar gönder (${cooldown})` : 'Kodu tekrar gönder'}
+                    {cooldown > 0 ? t('verify.resendIn', { seconds: cooldown }) : t('verify.resend')}
                 </button>
             </p>
         </AuthLayout>
