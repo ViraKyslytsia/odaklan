@@ -14,7 +14,7 @@ export const api = {
     // Профиль
     getProfile: () => request('/api/profile'),
     updateProfile: (data) => request('/api/profile', json('PUT', data)),
-
+    checkNickname: (nickname) => request(`/api/profile/nickname-check?nickname=${encodeURIComponent(nickname)}`),
     // Предметы
     getSubjects: () => request('/api/subjects'),
     createSubject: (data) => request('/api/subjects', json('POST', data)),
