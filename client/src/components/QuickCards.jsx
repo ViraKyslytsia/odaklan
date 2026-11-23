@@ -13,10 +13,10 @@ export default function QuickCards({ exams }) {
 
     return (
         <div className="quick-cards">
-            <Link to="/music" className="mini-card">
-                <span className="mini-label">{t('quick.music')}</span>
-                <span className="mini-text">{t('quick.musicText')}</span>
-            </Link>
+            <div className="mini-card water-card">
+                <span className="mini-label">{t('quick.water')}</span>
+                <span className="mini-text">💧 {t('quick.waterText')}</span>
+            </div>
             <Link to="/exams" className="mini-card">
                 <span className="mini-label">{t('exams.next')}</span>
                 <span className="mini-text">

@@ -284,6 +284,13 @@ transition: stroke-dashoffset 1s linear;
 .mini-card:hover {
     border-color: var(--primary-soft);
 }
+.water-card {
+    cursor: default;
+}
+
+.water-card:hover {
+    border-color: var(--border);
+}
 
 .mini-label {
     font-size: 0.6875rem;

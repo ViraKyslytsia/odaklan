@@ -6,6 +6,16 @@ import RegionPicker from '../components/RegionPicker';
 import { useT } from '../i18n/LanguageContext';
 
 const NO_STATUS = { field: '', kind: '' };
+const TEAM_EMAIL = 'verakislisa@gmail.com';
+const TEAM_TELEGRAM = 'virakyslytsia';
+
+// карточки возможностей в блоке «О нас»: тексты берутся из about.<key> и about.<key>Text
+const ABOUT_FEATURES = [
+    { icon: '⏱️', key: 'timer' },
+    { icon: '✅', key: 'tasks' },
+    { icon: '📅', key: 'schedule' },
+    { icon: '🎯', key: 'exams' },
+];
 
 export default function Profile() {
     const { signOut } = useAuth();
@@ -95,21 +105,48 @@ export default function Profile() {
     }
 
     return (
-        <div className="card profile-card">
-            <h1 style={{ marginTop: 0, fontSize: 'var(--fs-xl)' }}>{t('profile.title')}</h1>
+        <div className="profile-page">
+            <aside className="card about-card">
+                <h2 className="about-name">Odaklan</h2>
+                <p className="about-meaning">{t('about.meaning')}</p>
+                <p className="about-text">{t('about.text')}</p>
 
-            {renderField('name', 'profile.name', 'text')}
-            {renderField('email', 'profile.email', 'email')}
+                <ul className="about-features">
+                    {ABOUT_FEATURES.map(({ icon, key }) => (
+                        <li key={key} className="about-feature">
+                            <span className="about-feature-icon" aria-hidden="true">{icon}</span>
+                            <span className="about-feature-title">{t(`about.${key}`)}</span>
+                            <span className="about-feature-text">{t(`about.${key}Text`)}</span>
+                        </li>
+                    ))}
+                </ul>
+            </aside>
 
-            <RegionPicker
-                value={profile?.settings?.region}
-                onSelect={(region) => save({ settings: { region } }, 'region')}
-            />
-            {note('region')}
+            <div className="card profile-card">
+                <h1 style={{ marginTop: 0, fontSize: 'var(--fs-xl)' }}>{t('profile.title')}</h1>
 
-            <p style={{ color: 'var(--text-muted)', marginBottom: 8 }}>{t('profile.language')}</p>
-            <div style={{ marginBottom: 24 }}><LanguageButtons /></div>
-            <button className="btn btn-secondary" onClick={signOut}>{t('profile.logout')}</button>
+                {renderField('name', 'profile.name', 'text')}
+                {renderField('email', 'profile.email', 'email')}
+
+                <RegionPicker
+                    value={profile?.settings?.region}
+                    onSelect={(region) => save({ settings: { region } }, 'region')}
+                />
+                {note('region')}
+
+                <p style={{ color: 'var(--text-muted)', marginBottom: 8 }}>{t('profile.language')}</p>
+                <div style={{ marginBottom: 24 }}><LanguageButtons /></div>
+                <button className="btn btn-secondary" onClick={signOut}>{t('profile.logout')}</button>
+            </div>
+
+            <section className="card profile-info-card">
+                <h2 className="profile-info-title">{t('team.title')}</h2>
+                <p className="profile-info-text">{t('team.text')}</p>
+                <a className="profile-mail" href={`mailto:${TEAM_EMAIL}`}>{TEAM_EMAIL}</a>
+                <a className="profile-mail" href={`https://t.me/${TEAM_TELEGRAM}`} target="_blank" rel="noopener noreferrer">
+                    @{TEAM_TELEGRAM}
+                </a>
+            </section>
         </div>
     );
 }
