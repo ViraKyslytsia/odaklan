@@ -54,4 +54,25 @@ export const api = {
     createScheduleItem: (data) => request('/api/schedule', json('POST', data)),
     updateScheduleItem: (id, data) => request(`/api/schedule/${id}`, json('PUT', data)),
     deleteScheduleItem: (id) => request(`/api/schedule/${id}`, { method: 'DELETE' }),
+
+    // Социальное: друзья, блокировки, группы, рейтинг
+    sendPresence: (studying) => request('/api/social/presence', json('POST', { studying })),
+    getSocial: () => request('/api/social/overview'),
+    searchUsers: (q) => request(`/api/social/search?q=${encodeURIComponent(q)}`),
+    sendFriendRequest: (userId) => request('/api/social/requests', json('POST', { userId })),
+    acceptFriendRequest: (userId) => request(`/api/social/requests/${userId}/accept`, { method: 'POST' }),
+    cancelFriendRequest: (userId) => request(`/api/social/requests/${userId}`, { method: 'DELETE' }),
+    removeFriend: (userId) => request(`/api/social/friends/${userId}`, { method: 'DELETE' }),
+    blockUser: (userId) => request('/api/social/blocks', json('POST', { userId })),
+    unblockUser: (userId) => request(`/api/social/blocks/${userId}`, { method: 'DELETE' }),
+    createGroup: (name) => request('/api/social/groups', json('POST', { name })),
+    joinGroup: (code) => request('/api/social/groups/join', json('POST', { code })),
+    leaveGroup: (id) => request(`/api/social/groups/${id}/leave`, { method: 'POST' }),
+    deleteGroup: (id) => request(`/api/social/groups/${id}`, { method: 'DELETE' }),
+    getLeaderboard: (date, groupId) =>
+        request(
+            `/api/social/leaderboard?date=${date}` +
+            (groupId ? `&scope=group&group=${groupId}` : '&scope=friends')
+        ),
+    getUserMonth: (userId, month) => request(`/api/social/users/${userId}/month?month=${month}`),
 };

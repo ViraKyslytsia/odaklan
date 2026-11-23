@@ -2,12 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useT } from '../i18n/LanguageContext';
 import Logo from './Logo';
+import { startPresence } from '../utils/presence';
 const NAV_ITEMS = [
     { to: '/', labelKey: 'nav.home', end: true },
     { to: '/schedule', labelKey: 'nav.schedule' },
     { to: '/tasks', labelKey: 'nav.tasks' },
     { to: '/stats', labelKey: 'nav.stats' },
     { to: '/exams', labelKey: 'nav.exams' },
+    { to: '/social', labelKey: 'nav.social' },
     { to: '/profile', labelKey: 'nav.profile' },
 ];
 
@@ -16,6 +18,8 @@ export default function AppLayout() {
     const { pathname } = useLocation();
     const navRef = useRef(null);
     const [edges, setEdges] = useState({ left: false, right: false });
+    // пока приложение открыто, друзья видят нас «в сети»
+    useEffect(() => startPresence(), []);
     // где в меню ещё есть что прокручивать: там показываем плавное затухание края
     const updateEdges = useCallback(() => {
         const el = navRef.current;

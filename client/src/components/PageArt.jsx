@@ -31,7 +31,18 @@ const ART = {
             ))}
         </>
     ),
-
+    // социальное: два человека, у одного над головой мигает огонёк «учится»
+    // социальное: ты в центре, вокруг друзья, огоньки «в сети» загораются по очереди
+    social: (
+        <>
+            <path d="M32 32L15 20M32 32l17-12M32 32v20" className="pa-stroke-soft" />
+            <circle cx="32" cy="32" r="7" className="pa-stroke" />
+            <circle cx="32" cy="32" r="2.5" className="pa-fill" />
+            <circle cx="15" cy="20" r="4.5" className="pa-fill pa-blink pa-d0" />
+            <circle cx="49" cy="20" r="4.5" className="pa-fill pa-blink pa-d1" />
+            <circle cx="32" cy="52" r="4.5" className="pa-fill pa-blink pa-d2" />
+        </>
+    ),
     // статистика: столбики то растут, то опускаются
     stats: (
         <>

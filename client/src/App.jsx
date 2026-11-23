@@ -11,7 +11,7 @@ import Schedule from './pages/Schedule.jsx';
 import Stats from './pages/Stats';
 import Tasks from './pages/Tasks';
 import Verify from './pages/Verify';
-
+import Social from './pages/Social';
 export default function App() {
   return (
     <ErrorBoundary>
@@ -27,6 +27,7 @@ export default function App() {
           <Route path="/calendar" element={<Navigate to="/stats" replace />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/exams" element={<Exams />} />
+          <Route path="/social" element={<Social />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 

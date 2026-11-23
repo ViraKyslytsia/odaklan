@@ -25,7 +25,7 @@ app.use('/api/exams', auth, require('./routes/exams'));
 app.use('/api/sessions', auth, require('./routes/sessions'));
 app.use('/api/stats', auth, require('./routes/stats'));
 app.use('/api/schedule', auth, require('./routes/schedule'));
-
+app.use('/api/social', auth, require('./routes/social'));
 app.use('/api', (req, res) => {
     res.status(404).json({ error: 'Not found' });
 });

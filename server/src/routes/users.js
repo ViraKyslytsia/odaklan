@@ -1,10 +1,21 @@
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const NICKNAME_RE = /^[\p{L}\p{N}_.]{3,20}$/u; // 3–20 символов: буквы, цифры, _ и точка
 const express = require('express');
 const User = require('../models/User');
 
 const router = express.Router();
-const publicFields = 'name email avatar settings';
+const publicFields = 'name email nickname settings';
 const SETTINGS_KEYS = ['language', 'focusMinutes', 'shortBreakMinutes', 'longBreakMinutes', 'setsBeforeLongBreak'];
+
+function isValidTimezone(tz) {
+    if (typeof tz !== 'string' || !tz) return false;
+    try {
+        new Intl.DateTimeFormat('en', { timeZone: tz });
+        return true;
+    } catch {
+        return false;
+    }
+}
 
 router.get('/', async (req, res) => {
     try {
@@ -15,11 +26,27 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-
+// свободен ли никнейм (регистр не важен); свой текущий никнейм не считается занятым
+router.get('/nickname-check', async (req, res) => {
+    try {
+        const nickname = String(req.query.nickname || '').trim();
+        if (!NICKNAME_RE.test(nickname)) {
+            return res.status(400).json({ error: 'Nickname must be 3-20 characters: letters, digits, _ or .' });
+        }
+        const taken = await User.exists({
+            nicknameKey: nickname.toLowerCase(),
+            _id: { $ne: req.userId },
+        });
+        res.json({ available: !taken });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
 async function updateProfile(req, res) {
     try {
         const updates = {};
-        for (const field of ['name', 'email', 'avatar']) {
+        for (const field of ['name', 'email']) {
             const value = req.body[field];
             if (value === undefined) continue;
             if (typeof value !== 'string') {
@@ -30,14 +57,44 @@ async function updateProfile(req, res) {
         if (updates.email !== undefined && !EMAIL_RE.test(updates.email)) {
             return res.status(400).json({ error: 'Invalid email format' });
         }
-        if (updates.avatar && !/^(data:image\/|https?:\/\/)/.test(updates.avatar)) {
-            return res.status(400).json({ error: 'avatar must be an image data URL or http(s) link' });
+        if (req.body.nickname !== undefined) {
+            const nickname = typeof req.body.nickname === 'string' ? req.body.nickname.trim() : '';
+            if (!NICKNAME_RE.test(nickname)) {
+                return res.status(400).json({ error: 'Nickname must be 3-20 characters: letters, digits, _ or .' });
+            }
+            updates.nickname = nickname;
+            updates.nicknameKey = nickname.toLowerCase();
         }
-
         const settings = req.body.settings;
         if (settings && typeof settings === 'object') {
             for (const key of SETTINGS_KEYS) {
                 if (settings[key] !== undefined) updates[`settings.${key}`] = settings[key];
+            }
+
+            const region = settings.region;
+            if (region && typeof region === 'object') {
+                const { countryCode, countryName, city, latitude, longitude, timezone } = region;
+                if (typeof countryCode !== 'string' || !/^[A-Za-z]{2}$/.test(countryCode)) {
+                    return res.status(400).json({ error: 'Invalid country code' });
+                }
+                if (typeof city !== 'string' || !city.trim() || city.length > 100) {
+                    return res.status(400).json({ error: 'Invalid city' });
+                }
+                if (!Number.isFinite(latitude) || Math.abs(latitude) > 90 ||
+                    !Number.isFinite(longitude) || Math.abs(longitude) > 180) {
+                    return res.status(400).json({ error: 'Invalid coordinates' });
+                }
+                if (!isValidTimezone(timezone)) {
+                    return res.status(400).json({ error: 'Invalid timezone' });
+                }
+                updates['settings.region'] = {
+                    countryCode: countryCode.toUpperCase(),
+                    countryName: String(countryName || '').slice(0, 100),
+                    city: city.trim(),
+                    latitude,
+                    longitude,
+                    timezone,
+                };
             }
         }
 
@@ -49,7 +106,10 @@ async function updateProfile(req, res) {
         res.json(user);
     } catch (err) {
         if (err.code === 11000) {
-            return res.status(409).json({ error: 'Email is already used' });
+            const nicknameTaken = err.keyPattern && err.keyPattern.nicknameKey;
+            return res.status(409).json({
+                error: nicknameTaken ? 'Nickname is already taken' : 'Email is already used',
+            });
         }
         if (err.name === 'ValidationError') {
             return res.status(400).json({ error: err.message });

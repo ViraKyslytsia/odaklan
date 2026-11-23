@@ -6,6 +6,7 @@ import { useTimerSettings } from '../hooks/useTimerSettings';
 import { useT } from '../i18n/LanguageContext';
 import { formatTime, todayStr } from '../utils/date';
 import { showNotification } from '../utils/notify';
+import { setStudying } from '../utils/presence';
 import TimerSettingsModal from './TimerSettingsModal';
 import SubjectList from './SubjectList';
 import SubjectsModal from './SubjectsModal';
@@ -165,6 +166,12 @@ export default function TimerCard({ subjects = [], onSubjectsChange, children })
     const progress = 1 - timer.remaining / timer.total;
     const isFocus = timer.mode === 'focus';
 
+    // друзья видят «учится сейчас», пока идёт таймер фокуса
+    const studying = timer.running && isFocus;
+    useEffect(() => {
+        setStudying(studying);
+        return () => setStudying(false);
+    }, [studying]);
     const elapsed =
         isFocus && timer.remaining < timer.total
             ? timer.total - timer.remaining
