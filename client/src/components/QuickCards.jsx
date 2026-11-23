@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useT } from '../i18n/LanguageContext';
+import HolidayCard from './HolidayCard';
+import WeatherCard from './WeatherCard';
 function nextExam(exams) {
     const now = Date.now();
     return exams
@@ -7,7 +9,7 @@ function nextExam(exams) {
         .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
 }
 
-export default function QuickCards({ exams }) {
+export default function QuickCards({ exams, region }) {
     const { t, locale } = useT();
     const exam = nextExam(exams);
 
@@ -28,6 +30,8 @@ export default function QuickCards({ exams }) {
                         : t('quick.examAdd')}
                 </span>
             </Link>
+            <WeatherCard region={region} />
+            <HolidayCard region={region} />
         </div>
     );
 }

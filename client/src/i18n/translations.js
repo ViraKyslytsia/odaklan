@@ -143,7 +143,9 @@ export const translations = {
         'settings.notifyNote': 'Süre dolunca tarayıcı bildirimi gönder',
         'settings.unsupported': 'Bu tarayıcı bildirimleri desteklemiyor',
         'settings.denied': 'Tarayıcı bildirimlere izin vermedi. Adres çubuğundaki ayarlardan izin ver.',
-
+        'quick.weather': 'HAVA',
+        'quick.holiday': 'SIRADAKİ TATİL',
+        'quick.regionAdd': 'Ayarlardan şehir seç',
         'tasks.today': 'Bugünün görevleri',
         'tasks.empty': 'Bugün için görev yok.',
         'tasks.add': 'Görev ekle',
@@ -237,6 +239,9 @@ export const translations = {
         'schedule.hideWeekend': 'Hafta sonunu gizle',
         'schedule.endBeforeStart': 'Bitiş saati başlangıçtan sonra olmalı',
         'schedule.error': 'İşlem başarısız: {message}',
+        'toast.network': 'Sunucuya ulaşılamıyor',
+        'toast.loadError': 'Veriler yüklenemedi: {message}',
+        'toast.actionError': 'İşlem başarısız: {message}',
     },
 
     en: {
@@ -468,6 +473,12 @@ export const translations = {
         'schedule.hideWeekend': 'Hide weekend',
         'schedule.endBeforeStart': 'End time must be after the start',
         'schedule.error': 'Something went wrong: {message}',
+        'quick.weather': 'WEATHER',
+        'quick.holiday': 'NEXT HOLIDAY',
+        'quick.regionAdd': 'Pick a city in Settings',
+        'toast.network': 'Can’t reach the server',
+        'toast.loadError': 'Couldn’t load data: {message}',
+        'toast.actionError': 'Something went wrong: {message}',
     },
 
     ru: {
@@ -698,6 +709,12 @@ export const translations = {
         'schedule.hideWeekend': 'Скрыть выходные',
         'schedule.endBeforeStart': 'Конец должен быть позже начала',
         'schedule.error': 'Не получилось: {message}',
+        'quick.weather': 'ПОГОДА',
+        'quick.holiday': 'БЛИЖАЙШИЙ ПРАЗДНИК',
+        'quick.regionAdd': 'Выбери город в настройках',
+        'toast.network': 'Нет связи с сервером',
+        'toast.loadError': 'Не удалось загрузить данные: {message}',
+        'toast.actionError': 'Не получилось: {message}',
     },
 
     uk: {
@@ -849,7 +866,9 @@ export const translations = {
         'quick.musicText': 'Підключити Spotify',
         'quick.exam': 'ІСПИТ',
         'quick.examAdd': 'Додати дату',
-
+        'quick.weather': 'ПОГОДА',
+        'quick.holiday': 'НАЙБЛИЖЧЕ СВЯТО',
+        'quick.regionAdd': 'Обери місто в налаштуваннях',
         'profile.title': 'Налаштування',
         'profile.language': 'Мова',
         'exams.add': 'Додати іспит',
@@ -928,5 +947,8 @@ export const translations = {
         'schedule.hideWeekend': 'Сховати вихідні',
         'schedule.endBeforeStart': 'Кінець має бути пізніше за початок',
         'schedule.error': 'Не вийшло: {message}',
+        'toast.network': 'Немає зв’язку із сервером',
+        'toast.loadError': 'Не вдалося завантажити дані: {message}',
+        'toast.actionError': 'Не вдалося: {message}',
     },
 };

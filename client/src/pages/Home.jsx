@@ -5,30 +5,45 @@ import QuickCards from '../components/QuickCards';
 import TimerCard from '../components/TimerCard';
 import TodayTasks from '../components/TodayTasks';
 import { todayStr } from '../utils/date';
+import { useToast } from '../context/ToastContext';
 
 export default function Home() {
     const [subjects, setSubjects] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [exams, setExams] = useState([]);
     const [name, setName] = useState(() => localStorage.getItem('odaklan_name') || '');
+    const [region, setRegion] = useState(null);
+    const toast = useToast();
 
     useEffect(() => {
+        let cancelled = false;
         Promise.all([api.getSubjects(), api.getTasks(todayStr()), api.getExams()])
-            .then(([s, t, e]) => {
-                setSubjects(s);
-                setTasks(t);
-                setExams(e);
+            .then(([subjectList, taskList, examList]) => {
+                if (cancelled) return;
+                setSubjects(subjectList);
+                setTasks(taskList);
+                setExams(examList);
             })
-            .catch(() => { });
-    }, []);
+            .catch((err) => !cancelled && toast.apiError(err, 'toast.loadError'));
+        return () => {
+            cancelled = true;
+        };
+    }, [toast]);
+
     useEffect(() => {
+        let cancelled = false;
         api.getProfile()
             .then((p) => {
+                if (cancelled) return;
                 setName(p.name || '');
+                setRegion(p.settings?.region || null);
                 localStorage.setItem('odaklan_name', p.name || '');
             })
-            .catch(() => { });
-    }, []);
+            .catch((err) => !cancelled && toast.apiError(err, 'toast.loadError'));
+        return () => {
+            cancelled = true;
+        };
+    }, [toast]);
 
     // пункты чек-листов экзаменов, назначенные на сегодня, показываем рядом с обычными задачами
     const examTasks = useMemo(() => {
@@ -46,6 +61,7 @@ export default function Home() {
                 }))
         );
     }, [exams]);
+
     const todayList = useMemo(() => [...tasks, ...examTasks], [tasks, examTasks]);
 
     async function toggleTask(id) {
@@ -58,19 +74,19 @@ export default function Home() {
             }
             const updated = await api.toggleTask(id);
             setTasks((list) => list.map((t) => (t._id === updated._id ? updated : t)));
-        } catch {
-            // ошибку покажем позже, когда сделаем общие уведомления
+        } catch (err) {
+            toast.apiError(err, 'toast.actionError');
         }
     }
 
     return (
         <>
-            <Greeting name={name} />
+            <Greeting name={name} timeZone={region?.timezone} />
             <div className="home-grid">
                 <TimerCard subjects={subjects} onSubjectsChange={setSubjects} />
                 <div className="home-side">
                     <TodayTasks tasks={todayList} subjects={subjects} onToggle={toggleTask} />
-                    <QuickCards exams={exams} />
+                    <QuickCards exams={exams} region={region} />
                 </div>
             </div>
         </>

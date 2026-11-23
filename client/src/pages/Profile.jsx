@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { LanguageButtons } from '../components/LanguageSwitcher';
 import RegionPicker from '../components/RegionPicker';
 import { useT } from '../i18n/LanguageContext';
-
+import PageArt from '../components/PageArt';
+import { useToast } from '../context/ToastContext';
 const NO_STATUS = { field: '', kind: '' };
 const TEAM_EMAIL = 'verakislisa@gmail.com';
 const TEAM_TELEGRAM = 'virakyslytsia';
@@ -21,14 +22,15 @@ export default function Profile() {
     const { signOut } = useAuth();
     const [profile, setProfile] = useState(null);
     const { t } = useT();
+    const toast = useToast();
     const [editing, setEditing] = useState(''); // какое поле сейчас правится: '' | 'name' | 'email'
     const [draft, setDraft] = useState('');
     // field — к какому полю относится сообщение: 'name' | 'email' | 'region'
     const [status, setStatus] = useState(NO_STATUS); // kind: 'saved' | 'error' | 'taken'
 
     useEffect(() => {
-        api.getProfile().then(setProfile).catch(() => { });
-    }, []);
+        api.getProfile().then(setProfile).catch((err) => toast.apiError(err, 'toast.loadError'));
+    }, [toast]);
 
     // одна функция сохранения для имени, почты и региона; возвращает true, если получилось
     async function save(data, field) {
@@ -123,7 +125,7 @@ export default function Profile() {
             </aside>
 
             <div className="card profile-card">
-                <h1 style={{ marginTop: 0, fontSize: 'var(--fs-xl)' }}>{t('profile.title')}</h1>
+                <h1 className="page-title"><PageArt name="profile" size={56} /><span>{t('profile.title')}</span></h1>
 
                 {renderField('name', 'profile.name', 'text')}
                 {renderField('email', 'profile.email', 'email')}

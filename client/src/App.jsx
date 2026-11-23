@@ -5,7 +5,6 @@ import { GuestRoute, ProtectedRoute } from './components/RouteGuards';
 import Exams from './pages/Exams';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Placeholder from './pages/Placeholder';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import Schedule from './pages/Schedule.jsx';
@@ -28,7 +27,6 @@ export default function App() {
           <Route path="/calendar" element={<Navigate to="/stats" replace />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/exams" element={<Exams />} />
-          <Route path="/music" element={<Placeholder titleKey="nav.music" />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 

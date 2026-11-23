@@ -4,6 +4,7 @@ import LineChart from '../components/LineChart';
 import { useT } from '../i18n/LanguageContext';
 import { buildMonthGrid, shiftMonth } from '../utils/calendar';
 import { pad2, parseDay } from '../utils/countdown';
+import PageArt from '../components/PageArt';
 import { addDays, formatStudied, todayStr } from '../utils/date';
 
 const PERIODS = [7, 28, 90, 365];
@@ -399,8 +400,11 @@ export default function Stats() {
     const tabs = ['periods', 'calendar', 'months', ...(yearsWithData.length > 1 ? ['years'] : [])];
 
     return (
-        <div className="card stats-card">
-            <div className="stats-controls">
+        <>
+            <div className="page-head">
+                <h1 className="page-title"><PageArt name="stats" size={56} /><span>{t('nav.stats')}</span></h1>
+            </div>
+            <div className="card stats-card">
                 <div className="segmented" role="tablist">
                     {tabs.map((key) => (
                         <button
@@ -442,6 +446,6 @@ export default function Stats() {
             ) : (
                 <YearsTab yearTotals={data.yearTotals} firstYear={firstYear} formatDuration={formatDuration} today={today} />
             )}
-        </div>
+        </>
     );
 }

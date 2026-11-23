@@ -1,0 +1,178 @@
+/* ---------- Заголовок страницы с иллюстрацией ---------- */
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.card>.page-title {
+    margin-bottom: var(--space-4);
+    font-size: var(--fs-xl);
+}
+
+.page-art {
+    flex: none;
+    filter: drop-shadow(0 6px 14px rgba(124, 58, 237, 0.35));
+    animation: pa-float 4s ease-in-out infinite;
+}
+
+/* общие стили линий и заливок */
+.pa-stroke,
+.pa-stroke-soft,
+.pa-check {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.pa-stroke {
+    stroke: #ddd6fe;
+    stroke-width: 3;
+}
+
+.pa-stroke-soft {
+    stroke: var(--primary-soft);
+    stroke-width: 2.5;
+}
+
+.pa-fill {
+    fill: var(--primary-soft);
+}
+
+/* расписание: блоки по очереди мигают */
+.pa-blink {
+    animation: pa-blink 2.4s ease-in-out infinite;
+}
+
+/* задачи: галочки рисуются по очереди */
+.pa-check {
+    stroke: #ddd6fe;
+    stroke-width: 3;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: pa-draw 3s ease-in-out infinite;
+}
+
+/* статистика: столбики растут от нижней линии */
+.pa-bar {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: pa-grow 2.4s ease-in-out infinite;
+}
+
+/* экзамены: стрелки часов */
+.pa-hand {
+    transform-box: view-box;
+    transform-origin: 32px 35px;
+    animation: pa-spin 6s linear infinite;
+}
+
+.pa-hand-slow {
+    animation-duration: 36s;
+}
+
+/* музыка: волны пульсируют */
+.pa-wave {
+    animation: pa-blink 1.8s ease-in-out infinite;
+}
+
+/* настройки: шестерёнка */
+.pa-gear {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pa-spin 14s linear infinite;
+}
+
+.pa-d0 {
+    animation-delay: 0s;
+}
+
+.pa-d1 {
+    animation-delay: 0.4s;
+}
+
+.pa-d2 {
+    animation-delay: 0.8s;
+}
+
+@keyframes pa-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes pa-blink {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes pa-draw {
+    0% {
+        stroke-dashoffset: 1;
+    }
+
+    25%,
+    80% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: 1;
+    }
+}
+
+@keyframes pa-grow {
+
+    0%,
+    100% {
+        transform: scaleY(0.55);
+    }
+
+    50% {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes pa-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------- Плавное появление страницы при переходе по вкладкам ---------- */
+main {
+    animation: page-in 0.35s ease-out backwards;
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    main,
+    .page-art,
+    .page-art * {
+        animation: none !important;
+    }
+
+    .pa-check {
+        stroke-dashoffset: 0;
+    }
+}

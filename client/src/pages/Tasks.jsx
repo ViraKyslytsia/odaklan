@@ -4,6 +4,7 @@ import DayNav from '../components/DayNav';
 import TaskItem from '../components/TaskItem';
 import { useT } from '../i18n/LanguageContext';
 import { parseDay } from '../utils/countdown';
+import PageArt from '../components/PageArt';
 import { todayStr } from '../utils/date';
 
 export default function Tasks() {
@@ -138,7 +139,7 @@ export default function Tasks() {
     return (
         <>
             <div className="page-head">
-                <h1>{t('nav.tasks')}</h1>
+                <h1 className="page-title"><PageArt name="tasks" size={56} /><span>{t('nav.tasks')}</span></h1>
             </div>
 
             <DayNav date={date} onChange={setDate} />

@@ -6,6 +6,7 @@ import ExamHero from '../components/ExamHero';
 import ExamModal from '../components/ExamModal';
 import ExamStats from '../components/ExamStats';
 import { useNow } from '../hooks/useNow';
+import PageArt from '../components/PageArt';
 import { useT } from '../i18n/LanguageContext';
 
 export default function Exams() {
@@ -97,7 +98,7 @@ export default function Exams() {
     return (
         <>
             <div className="page-head">
-                <h1>{t('nav.exams')}</h1>
+                <h1 className="page-title"><PageArt name="exams" size={56} /><span>{t('nav.exams')}</span></h1>
                 {exams.length > 0 && (
                     <button type="button" className="btn btn-primary" onClick={() => setModal('new')}>
                         + {t('exams.add')}

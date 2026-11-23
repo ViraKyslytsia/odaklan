@@ -9,17 +9,26 @@ function dayPart(hour) {
 }
 
 // Именное приветствие над таймером и задачами
-export default function Greeting({ name }) {
+export default function Greeting({ name, timeZone }) {
     const { t, locale } = useT();
     const firstName = (name || '').trim().split(/\s+/)[0]; // из «Вира Кислиця» берём «Вира»
     const now = new Date();
-    const date = now.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
+    const tz = timeZone || undefined; // без региона берём время устройства
+    const hour = Number(
+        new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: tz }).format(now)
+    );
+    const date = now.toLocaleDateString(locale, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        timeZone: tz,
+    });
 
     return (
         <header className="greeting">
             {/* key перезапускает анимацию, когда имя подгрузилось с сервера */}
             <h1 className="greeting-title" key={firstName}>
-                {firstName ? t(`greet.${dayPart(now.getHours())}`, { name: firstName }) : '\u00A0'}
+                {firstName ? t(`greet.${dayPart(hour)}`, { name: firstName }) : '\u00A0'}
             </h1>
             <p className="greeting-date">{date}</p>
         </header>

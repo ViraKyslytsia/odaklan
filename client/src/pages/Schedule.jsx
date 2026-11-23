@@ -4,6 +4,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import ScheduleModal from '../components/ScheduleModal';
 import { useNow } from '../hooks/useNow';
 import { useT } from '../i18n/LanguageContext';
+import PageArt from '../components/PageArt';
 import { LOCALES } from '../i18n/translations';
 import { layoutDay, toHHMM, toMin, weekdayNames } from '../utils/schedule';
 
@@ -125,7 +126,7 @@ export default function Schedule() {
     return (
         <>
             <div className="page-head">
-                <h1>{t('nav.schedule')}</h1>
+                <h1 className="page-title"><PageArt name="schedule" size={56} /><span>{t('nav.schedule')}</span></h1>
                 {items.length > 0 && (
                     <button type="button" className="btn btn-primary" onClick={() => setModal({})}>
                         + {t('schedule.add')}
