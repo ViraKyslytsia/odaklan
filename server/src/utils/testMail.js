@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { transporter, buildHtml } = require('./mailer');
+const { sendMail, buildHtml, isConfigured, transporter } = require('./mailer');
 
 async function main() {
     const to = process.argv[2];
@@ -7,18 +7,19 @@ async function main() {
         console.log('Usage: node src/utils/testMail.js your@email.com');
         return;
     }
-    if (!transporter) {
-        console.log('SMTP is not configured: SMTP_USER or SMTP_PASS is missing in .env');
+    if (!isConfigured()) {
+        console.log('Mail is not configured: set BREVO_API_KEY (or SMTP_USER and SMTP_PASS) in .env');
         return;
     }
 
-    console.log('1) Checking connection to the mail server...');
-    await transporter.verify();
-    console.log('   OK: connected and logged in');
+    if (transporter) {
+        console.log('1) Checking connection to the mail server...');
+        await transporter.verify();
+        console.log('   OK: connected and logged in');
+    }
 
-    console.log('2) Sending a test email...');
-    await transporter.sendMail({
-        from: process.env.MAIL_FROM || process.env.SMTP_USER,
+    console.log(`${transporter ? '2' : '1'}) Sending a test email...`);
+    await sendMail({
         to,
         subject: 'odaklan: test email',
         text: 'Test code: 123456',

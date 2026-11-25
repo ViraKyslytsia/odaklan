@@ -3,8 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const auth = require('./middleware/auth');
+if (!process.env.JWT_SECRET) {
+    console.error('JWT_SECRET is not set in .env');
+    process.exit(1);
+}
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || '*' }));
 app.use(express.json({ limit: '2mb' }));

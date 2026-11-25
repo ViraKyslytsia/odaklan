@@ -22,13 +22,14 @@ The client and the server are independent: the client talks to the API only thro
 - Class schedule by weekday
 - Pomodoro timer with adjustable work/break time; every finished session is saved for statistics
 - Statistics and calendar: study time for any selected day or period
-- Profile (name, e-mail, avatar, region) and language switch
+- Profile (name, e-mail, region) and language switch
 - Home screen: greeting in the time zone of the chosen city, weather and the next public holiday of the chosen country
 - Success and error notifications
+- Social: friends, groups with admin and deputy roles, blocking, daily ranking
 
 ## Data models
 
-`User`, `Subject`, `Task`, `Exam` (with checklist items), `StudySession`, `ScheduleItem`.
+`User`, `Subject`, `Task`, `Exam` (with checklist items), `StudySession`, `ScheduleItem`, `Friendship`, `Block`, `Group`.
 Every record belongs to a user; all queries are filtered by the authenticated user.
 
 ## Run
@@ -44,7 +45,7 @@ npm run dev            # http://localhost:4000
 ```
 
 `.env` variables: `PORT`, `MONGO_URI`, `JWT_SECRET`, `CLIENT_ORIGIN`,
-`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`.
+`BREVO_API_KEY`, `MAIL_FROM` (optional for local dev: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`).
 
 ### 2. Client
 ```bash
@@ -55,6 +56,19 @@ npm run dev            # http://localhost:5173
 
 In development the client proxies `/api` to `http://localhost:4000`.
 For production set `VITE_API_URL` to the API address before `npm run build`.
+
+## Deploy
+
+**Server (Render, Web Service)**: Root Directory `server`, Build Command `npm install`, Start Command `npm start`, Health Check Path `/api/health`.
+Environment variables: `MONGO_URI`, `JWT_SECRET`, `CLIENT_ORIGIN` (for example `https://virakyslytsia.github.io`), `BREVO_API_KEY`, `MAIL_FROM`.
+In MongoDB Atlas open Network Access and allow `0.0.0.0/0`, because Render has no fixed IP on the free plan.
+
+E-mail goes through the Brevo HTTP API: free Render services block outbound SMTP ports (25, 465, 587), so plain SMTP does not work there.
+`MAIL_FROM` must be a sender verified in Brevo.
+
+**Client (GitHub Pages)**: the workflow `.github/workflows/deploy-pages.yml` builds `client/` on every push to `main`.
+In the repository open Settings -> Pages -> Source: GitHub Actions, then Settings -> Secrets and variables -> Actions -> Variables and add `VITE_API_URL` with the Render address (no `/api`, no trailing slash).
+The app uses `HashRouter`, so page reloads work on GitHub Pages without extra setup.
 
 ## Backend API
 

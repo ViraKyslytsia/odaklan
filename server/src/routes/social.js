@@ -93,6 +93,8 @@ function userIdFrom(req, res, value) {
     }
     return value;
 }
+const roleOf = (group, id) =>
+    same(group.owner, id) ? 'owner' : group.deputy && same(group.deputy, id) ? 'deputy' : 'member';
 
 function fail(res, err) {
     console.error(err);
@@ -159,6 +161,7 @@ router.get('/overview', async (req, res) => {
                 code: g.code,
                 membersCount: g.members.length,
                 isOwner: same(g.owner, me),
+                role: roleOf(g, me),
             })),
         });
     } catch (err) {
@@ -312,6 +315,10 @@ router.post('/blocks', async (req, res) => {
         if (!(await User.exists({ _id: target }))) {
             return res.status(404).json({ error: 'User not found' });
         }
+        // админа группы заблокировать нельзя (если вы в одной группе)
+        if (await Group.exists({ owner: target, members: me })) {
+            return res.status(403).json({ error: 'Cannot block a group admin' });
+        }
 
         await Block.updateOne(
             { blocker: me, blocked: target },
@@ -410,7 +417,13 @@ router.post('/groups/:id/leave', async (req, res) => {
         } else {
             group.members = rest;
             // владелец ушёл: группа переходит к следующему участнику
-            if (same(group.owner, req.userId)) group.owner = rest[0];
+            // зам ушёл: должность освобождается
+            if (group.deputy && same(group.deputy, req.userId)) group.deputy = null;
+            // админ ушёл: группу получает зам, а если зама нет, то следующий участник
+            if (same(group.owner, req.userId)) {
+                group.owner = group.deputy || rest[0];
+                if (group.deputy && same(group.deputy, group.owner)) group.deputy = null;
+            }
             await group.save();
         }
         res.json({ ok: true });
@@ -424,6 +437,103 @@ router.delete('/groups/:id', async (req, res) => {
         if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ error: 'Group not found' });
         const result = await Group.deleteOne({ _id: req.params.id, owner: req.userId });
         if (!result.deletedCount) return res.status(404).json({ error: 'Group not found' });
+        res.json({ ok: true });
+    } catch (err) {
+        fail(res, err);
+    }
+});
+
+// участники группы: роль, отношение ко мне (друг / заявка / блок)
+router.get('/groups/:id/members', async (req, res) => {
+    try {
+        const me = req.userId;
+        if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ error: 'Group not found' });
+        const group = await Group.findOne({ _id: req.params.id, members: me });
+        if (!group) return res.status(404).json({ error: 'Group not found' });
+
+        const [{ byMe, hidden }, friendships, users] = await Promise.all([
+            blockRelations(me),
+            friendshipsOf(me),
+            User.find({ _id: { $in: group.members } }).select(PUBLIC_FIELDS),
+        ]);
+        const relation = new Map();
+        for (const f of friendships) {
+            const other = String(otherSide(f, me));
+            if (f.status === 'accepted') relation.set(other, 'friend');
+            else relation.set(other, same(f.requester, me) ? 'outgoing' : 'incoming');
+        }
+
+        const order = { owner: 0, deputy: 1, member: 2 };
+        const members = users
+            // тех, кто заблокировал меня, не показываем; тех, кого заблокировала я, показываем, чтобы можно было разблокировать
+            .filter((u) => same(u._id, me) || byMe.has(String(u._id)) || !hidden.has(String(u._id)))
+            .map((u) => ({
+                ...toPublic(u),
+                role: roleOf(group, u._id),
+                isMe: same(u._id, me),
+                relation: relation.get(String(u._id)) || 'none',
+                blockedByMe: byMe.has(String(u._id)),
+            }))
+            .sort((a, b) => order[a.role] - order[b.role] || a.nickname.localeCompare(b.nickname));
+
+        res.json({ id: String(group._id), role: roleOf(group, me), members });
+    } catch (err) {
+        fail(res, err);
+    }
+});
+
+// назначить заместителя (только админ); userId = null снимает зама
+router.put('/groups/:id/deputy', async (req, res) => {
+    try {
+        if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ error: 'Group not found' });
+        const group = await Group.findOne({ _id: req.params.id, members: req.userId });
+        if (!group) return res.status(404).json({ error: 'Group not found' });
+        if (!same(group.owner, req.userId)) return res.status(403).json({ error: 'Only the admin can do this' });
+
+        const { userId } = req.body;
+        if (userId === null) {
+            group.deputy = null;
+        } else {
+            if (typeof userId !== 'string' || !mongoose.isValidObjectId(userId)) {
+                return res.status(400).json({ error: 'Invalid user id' });
+            }
+            if (same(userId, req.userId)) return res.status(400).json({ error: 'Admin is already in charge' });
+            if (!group.members.some((m) => same(m, userId))) {
+                return res.status(404).json({ error: 'User is not in the group' });
+            }
+            group.deputy = userId;
+        }
+        await group.save();
+        res.json({ ok: true });
+    } catch (err) {
+        fail(res, err);
+    }
+});
+
+// удалить участника: админ и зам; зам не может удалить админа
+router.delete('/groups/:id/members/:userId', async (req, res) => {
+    try {
+        const me = req.userId;
+        if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ error: 'Group not found' });
+        const target = userIdFrom(req, res, req.params.userId);
+        if (!target) return;
+
+        const group = await Group.findOne({ _id: req.params.id, members: me });
+        if (!group) return res.status(404).json({ error: 'Group not found' });
+
+        const myRole = roleOf(group, me);
+        if (myRole === 'member') return res.status(403).json({ error: 'Not allowed' });
+        if (!group.members.some((m) => same(m, target))) {
+            return res.status(404).json({ error: 'User is not in the group' });
+        }
+        if (same(group.owner, target)) return res.status(403).json({ error: 'Cannot remove the admin' });
+        if (myRole === 'deputy' && group.deputy && same(group.deputy, target)) {
+            return res.status(403).json({ error: 'Not allowed' });
+        }
+
+        group.members = group.members.filter((m) => !same(m, target));
+        if (group.deputy && same(group.deputy, target)) group.deputy = null;
+        await group.save();
         res.json({ ok: true });
     } catch (err) {
         fail(res, err);
