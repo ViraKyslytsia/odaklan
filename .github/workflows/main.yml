@@ -25,9 +25,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies and build
+        working-directory: client
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: |
           npm install
           npm run build
@@ -38,15 +41,14 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Если ваш клиент собирается в build, замените ./dist на ./build
-          path: ./dist
+          path: client/dist
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
