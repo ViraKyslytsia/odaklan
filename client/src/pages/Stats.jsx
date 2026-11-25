@@ -163,7 +163,10 @@ function PeriodsTab({ byDate, subjects, subjectNames, formatDuration, locale, to
         };
     }, [from, today, n]);
 
-    const rows = breakdown && breakdown.n === n ? breakdown.subjects : null;
+    const rows =
+        breakdown && breakdown.n === n
+            ? breakdown.subjects.filter((row) => subjects.has(row.subject))
+            : null;
     const hLabel = t('unit.h');
     const mLabel = t('unit.m');
     const formatTick = (min) => (min >= 60 && min % 60 === 0 ? `${min / 60} ${hLabel}` : `${min} ${mLabel}`);
@@ -404,48 +407,50 @@ export default function Stats() {
             <div className="page-head">
                 <h1 className="page-title"><PageArt name="stats" size={56} /><span>{t('nav.stats')}</span></h1>
             </div>
-            <div className="card stats-card">
-                <div className="segmented" role="tablist">
-                    {tabs.map((key) => (
-                        <button
-                            key={key}
-                            type="button"
-                            role="tab"
-                            aria-selected={key === tab}
-                            className={key === tab ? 'active' : ''}
-                            onClick={() => setTab(key)}
-                        >
-                            {t(`stats.tab.${key}`)}
-                        </button>
-                    ))}
+            <div className="stats-page">
+                <div className="card stats-card">
+                    <div className="segmented" role="tablist">
+                        {tabs.map((key) => (
+                            <button
+                                key={key}
+                                type="button"
+                                role="tab"
+                                aria-selected={key === tab}
+                                className={key === tab ? 'active' : ''}
+                                onClick={() => setTab(key)}
+                            >
+                                {t(`stats.tab.${key}`)}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            {error ? (
-                <p className="form-error">{t('stats.error', { message: error })}</p>
-            ) : !data ? (
-                <div className="chart-skeleton" />
-            ) : tab === 'periods' ? (
-                <PeriodsTab
-                    byDate={data.byDate}
-                    subjects={data.subjects}
-                    subjectNames={subjectNames}
-                    formatDuration={formatDuration}
-                    locale={locale}
-                    today={today}
-                />
-            ) : tab === 'calendar' ? (
-                <CalendarTab byDate={data.byDate} formatDuration={formatDuration} locale={locale} today={today} />
-            ) : tab === 'months' ? (
-                <MonthsTab
-                    monthTotals={data.monthTotals}
-                    formatDuration={formatDuration}
-                    locale={locale}
-                    today={today}
-                />
-            ) : (
-                <YearsTab yearTotals={data.yearTotals} firstYear={firstYear} formatDuration={formatDuration} today={today} />
-            )}
+                {error ? (
+                    <p className="form-error">{t('stats.error', { message: error })}</p>
+                ) : !data ? (
+                    <div className="chart-skeleton" />
+                ) : tab === 'periods' ? (
+                    <PeriodsTab
+                        byDate={data.byDate}
+                        subjects={data.subjects}
+                        subjectNames={subjectNames}
+                        formatDuration={formatDuration}
+                        locale={locale}
+                        today={today}
+                    />
+                ) : tab === 'calendar' ? (
+                    <CalendarTab byDate={data.byDate} formatDuration={formatDuration} locale={locale} today={today} />
+                ) : tab === 'months' ? (
+                    <MonthsTab
+                        monthTotals={data.monthTotals}
+                        formatDuration={formatDuration}
+                        locale={locale}
+                        today={today}
+                    />
+                ) : (
+                    <YearsTab yearTotals={data.yearTotals} firstYear={firstYear} formatDuration={formatDuration} today={today} />
+                )}
+            </div>
         </>
     );
 }

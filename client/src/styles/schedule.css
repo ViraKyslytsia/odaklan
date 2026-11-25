@@ -157,3 +157,12 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-3);
 }
+@media (max-width: 640px) {
+    .page-head .schedule-add {
+        flex-shrink: 0;
+        padding: 8px 14px;
+        font-size: var(--fs-md);
+        border-radius: var(--radius-sm);
+        white-space: nowrap;
+    }
+}

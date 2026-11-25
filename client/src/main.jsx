@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import '@fontsource-variable/space-grotesk';
 import './styles/tokens.css';
 import './styles/base.css';
@@ -24,11 +24,11 @@ createRoot(document.getElementById('root')).render(
     <StrictMode>
         <LanguageProvider>
             <ToastProvider>
-                <BrowserRouter>
+                <HashRouter>
                     <AuthProvider>
                         <App />
                     </AuthProvider>
-                </BrowserRouter>
+                </HashRouter>
             </ToastProvider>
         </LanguageProvider>
     </StrictMode>

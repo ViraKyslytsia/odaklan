@@ -69,6 +69,9 @@ export const api = {
     joinGroup: (code) => request('/api/social/groups/join', json('POST', { code })),
     leaveGroup: (id) => request(`/api/social/groups/${id}/leave`, { method: 'POST' }),
     deleteGroup: (id) => request(`/api/social/groups/${id}`, { method: 'DELETE' }),
+    getGroupMembers: (id) => request(`/api/social/groups/${id}/members`),
+    setGroupDeputy: (id, userId) => request(`/api/social/groups/${id}/deputy`, json('PUT', { userId })),
+    removeGroupMember: (id, userId) => request(`/api/social/groups/${id}/members/${userId}`, { method: 'DELETE' }),
     getLeaderboard: (date, groupId) =>
         request(
             `/api/social/leaderboard?date=${date}` +

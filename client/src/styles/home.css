@@ -328,7 +328,7 @@ transition: stroke-dashoffset 1s linear;
     place-items: center;
     padding: var(--space-5);
     background: rgba(5, 4, 12, 0.7);
-    backdrop-filter: blur(6px);
+    background: rgba(5, 4, 12, 0.85);
     animation: fade-in 0.15s ease-out;
 }
 

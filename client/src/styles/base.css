@@ -69,3 +69,17 @@ a {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+/* ---------- Мобильный масштаб ---------- */
+@media (max-width: 640px) {
+    html {
+        zoom: 0.8;
+    }
+        body {
+            background-attachment: scroll;
+            /* fixed на телефоне перерисовывает фон при каждом движении */
+        }
+    .container {
+        padding: var(--space-4) var(--space-4);
+    }
+}

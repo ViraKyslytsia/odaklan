@@ -176,3 +176,8 @@ main {
         stroke-dashoffset: 0;
     }
 }
+/* пока открыто окно, декоративные анимации на странице под ним стоят */
+body.modal-open .page-art,
+body.modal-open .page-art * {
+    animation-play-state: paused;
+}

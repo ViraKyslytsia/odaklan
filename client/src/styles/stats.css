@@ -280,3 +280,77 @@
         font-size: var(--fs-sm);
     }
 }
+@media (max-width: 640px) {
+
+    /* внешний блок с вкладками: компактный, без лишних полей */
+    .stats-card {
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-3);
+    }
+
+    .stats-card .segmented {
+        display: flex;
+        width: 100%;
+    }
+
+    .stats-card .segmented button {
+        flex: 1;
+        padding: 10px 4px;
+        font-size: var(--fs-md);
+    }
+
+    /* переключатель 7 / 28 / 90 / 365: одинаковые отступы сверху и снизу */
+    .stats-controls {
+        margin: 0 0 var(--space-3);
+    }
+
+    .stats-controls .segmented {
+        display: flex;
+        width: 100%;
+    }
+
+    .stats-controls .segmented button {
+        flex: 1;
+        padding: 10px 4px;
+        font-size: var(--fs-md);
+    }
+
+    /* плитки «Итого» и т.д. */
+    .exam-stat-tiles {
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
+    }
+}
+/* ---------- Страница статистики: одинаковые отступы и компактный вид ---------- */
+.stats-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.stats-page>* {
+    margin: 0;
+}
+
+@media (min-width: 641px) {
+    .stats-card {
+        align-self: flex-start;
+        width: fit-content;
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+    }
+
+    .stats-page .chart {
+        max-width: 380px;
+    }
+}
+/* меньшее закругление во всех версиях */
+.stats-page .stats-card,
+.stats-page .segmented {
+    border-radius: var(--radius-sm);
+}
+
+.stats-page .segmented button {
+    border-radius: 8px;
+}

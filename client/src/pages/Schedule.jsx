@@ -128,7 +128,7 @@ export default function Schedule() {
             <div className="page-head">
                 <h1 className="page-title"><PageArt name="schedule" size={56} /><span>{t('nav.schedule')}</span></h1>
                 {items.length > 0 && (
-                    <button type="button" className="btn btn-primary" onClick={() => setModal({})}>
+                    <button type="button" className="btn btn-primary schedule-add" onClick={() => setModal({})}>
                         + {t('schedule.add')}
                     </button>
                 )}

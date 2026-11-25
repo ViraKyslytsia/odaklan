@@ -52,4 +52,21 @@
 
     /* Тени */
     --shadow-glow: 0 8px 30px rgba(124, 58, 237, 0.35);
+@media (max-width: 640px) {
+        html {
+            font-size: 87.5%;
+            /* 14px вместо 16px: все rem-размеры шрифтов уменьшаются разом */
+        }
+
+        :root {
+            --space-4: 12px;
+            --space-5: 16px;
+            --space-6: 20px;
+            --space-7: 20px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --fs-xl: 1.25rem;
+            --fs-timer: 3.25rem;
+        }
+    }
 }

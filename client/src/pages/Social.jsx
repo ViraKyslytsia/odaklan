@@ -63,7 +63,7 @@ export default function Social() {
                 <Leaderboard groups={data.groups} scope={scope} onScopeChange={setScope} onOpenUser={setOpenUser} />
             )}
             {tab === 'friends' && overview && <FriendsTab overview={overview} reload={reload} onOpenUser={setOpenUser} />}
-            {tab === 'groups' && overview && <GroupsTab groups={data.groups} reload={reload} onOpenGroup={openGroup} />}
+            {tab === 'groups' && overview && <GroupsTab groups={data.groups} reload={reload} onOpenGroup={openGroup} onOpenUser={setOpenUser} />}
 
             {openUser && <MonthModal user={openUser} onClose={() => setOpenUser(null)} />}
         </div>

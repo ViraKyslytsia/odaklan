@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../api';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ExamCard from '../components/ExamCard';
-import ExamHero from '../components/ExamHero';
 import ExamModal from '../components/ExamModal';
 import ExamStats from '../components/ExamStats';
 import { useNow } from '../hooks/useNow';
@@ -117,11 +116,6 @@ export default function Exams() {
                     </button>
                 </div>
             )}
-
-            {upcoming[0] && (
-                <ExamHero exam={upcoming[0]} subject={subjectById[upcoming[0].subject]} now={now} onEdit={setModal} />
-            )}
-
             {upcoming.length > 0 && (
                 <section className="exam-section">
                     <div className="section-head">

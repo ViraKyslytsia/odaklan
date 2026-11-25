@@ -4,15 +4,17 @@ import { useToast } from '../../context/ToastContext';
 import { useT } from '../../i18n/LanguageContext';
 import ConfirmDialog from '../ConfirmDialog';
 import { EmptyText } from './Common';
+import GroupMembers from './GroupMembers';
 
 // Группы: создать, вступить по коду, открыть рейтинг группы
-export default function GroupsTab({ groups, reload, onOpenGroup }) {
+export default function GroupsTab({ groups, reload, onOpenGroup, onOpenUser }) {
     const { t } = useT();
     const toast = useToast();
     const [name, setName] = useState('');
     const [code, setCode] = useState('');
     const [busy, setBusy] = useState(false);
     const [confirm, setConfirm] = useState(null); // группа, которую покидаем или удаляем
+    const [openId, setOpenId] = useState(null); // группа с раскрытым списком участников
 
     async function run(action, successKey) {
         if (busy) return false;
@@ -103,10 +105,19 @@ export default function GroupsTab({ groups, reload, onOpenGroup }) {
                                 <button type="button" className="btn btn-primary btn-sm" onClick={() => onOpenGroup(g.id)}>
                                     {t('social.openRating')}
                                 </button>
+                                <button type="button" className="btn btn-secondary btn-sm"
+                                    onClick={() => setOpenId(openId === g.id ? null : g.id)}>
+                                    {openId === g.id ? t('social.hideMembers') : t('social.membersBtn')}
+                                </button>
                                 <button type="button" className="btn btn-secondary btn-sm" disabled={busy} onClick={() => setConfirm(g)}>
                                     {g.isOwner && g.membersCount === 1 ? t('common.delete') : t('social.leave')}
                                 </button>
                             </div>
+                            {openId === g.id && (
+                                <div className="soc-group-members">
+                                    <GroupMembers group={g} reload={reload} onOpenUser={onOpenUser} />
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
