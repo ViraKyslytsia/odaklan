@@ -146,83 +146,85 @@ export default function Tasks() {
 
             {error && <p className="form-error">{error}</p>}
 
-            <form className="card task-add" onSubmit={add}>
-                <div className="task-add-row">
-                    <input
-                        className="input"
-                        value={title}
-                        maxLength={120}
-                        placeholder={t('tasks.newPlaceholder')}
-                        aria-label={t('tasks.newPlaceholder')}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                    <button type="submit" className="btn btn-primary" disabled={!title.trim() || adding}>
-                        + {t('tasks.add')}
-                    </button>
-                </div>
-
-                {subjects.length > 0 && (
-                    <div className="exam-chips" role="group">
-                        <button
-                            type="button"
-                            className={`chip${!subject ? ' active' : ''}`}
-                            aria-pressed={!subject}
-                            onClick={() => setSubject('')}
-                        >
-                            {t('tasks.noSubject')}
+            <div className="tasks-layout">
+                <form className="card task-add" onSubmit={add}>
+                    <div className="task-add-row">
+                        <input
+                            className="input"
+                            value={title}
+                            maxLength={120}
+                            placeholder={t('tasks.newPlaceholder')}
+                            aria-label={t('tasks.newPlaceholder')}
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <button type="submit" className="btn btn-primary" disabled={!title.trim() || adding}>
+                            + {t('tasks.add')}
                         </button>
-                        {subjects.map((s) => (
+                    </div>
+
+                    {subjects.length > 0 && (
+                        <div className="exam-chips" role="group">
                             <button
-                                key={s._id}
                                 type="button"
-                                className={`chip${subject === s._id ? ' active' : ''}`}
-                                style={{ '--chip-color': s.color }}
-                                aria-pressed={subject === s._id}
-                                onClick={() => setSubject(s._id)}
+                                className={`chip${!subject ? ' active' : ''}`}
+                                aria-pressed={!subject}
+                                onClick={() => setSubject('')}
                             >
-                                {s.name}
+                                {t('tasks.noSubject')}
                             </button>
-                        ))}
-                    </div>
-                )}
-            </form>
+                            {subjects.map((s) => (
+                                <button
+                                    key={s._id}
+                                    type="button"
+                                    className={`chip${subject === s._id ? ' active' : ''}`}
+                                    style={{ '--chip-color': s.color }}
+                                    aria-pressed={subject === s._id}
+                                    onClick={() => setSubject(s._id)}
+                                >
+                                    {s.name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </form>
 
-            <section>
-                <div className="section-head">
-                    <h2 className="tasks-day-title">
-                        {dayTitle}
-                        {date === todayStr() && <span className="today-badge">{t('calendar.today')}</span>}
-                    </h2>
-                    <span className="section-count">
-                        {done} / {items.length}
-                    </span>
-                </div>
-
-                {items.length > 0 && (
-                    <div className="tasks-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
-                        <span style={{ width: `${pct}%` }} />
+                <section className="tasks-page-list">
+                    <div className="section-head">
+                        <h2 className="tasks-day-title">
+                            {dayTitle}
+                            {date === todayStr() && <span className="today-badge">{t('calendar.today')}</span>}
+                        </h2>
+                        <span className="section-count">
+                            {done} / {items.length}
+                        </span>
                     </div>
-                )}
 
-                {!loading && items.length === 0 ? (
-                    <div className="card tasks-empty">
-                        <p>{t('tasks.emptyDay')}</p>
-                        <p className="field-hint">{t('tasks.emptyHint')}</p>
-                    </div>
-                ) : (
-                    <ul className="task-list">
-                        {items.map((item) => (
-                            <TaskItem
-                                key={`${item.fromExam ? 'e' : 't'}-${item._id}`}
-                                item={item}
-                                onToggle={toggle}
-                                onRename={rename}
-                                onDelete={remove}
-                            />
-                        ))}
-                    </ul>
-                )}
-            </section>
+                    {items.length > 0 && (
+                        <div className="tasks-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
+                            <span style={{ width: `${pct}%` }} />
+                        </div>
+                    )}
+
+                    {!loading && items.length === 0 ? (
+                        <div className="card tasks-empty">
+                            <p>{t('tasks.emptyDay')}</p>
+                            <p className="field-hint">{t('tasks.emptyHint')}</p>
+                        </div>
+                    ) : (
+                        <ul className="task-list">
+                            {items.map((item) => (
+                                <TaskItem
+                                    key={`${item.fromExam ? 'e' : 't'}-${item._id}`}
+                                    item={item}
+                                    onToggle={toggle}
+                                    onRename={rename}
+                                    onDelete={remove}
+                                />
+                            ))}
+                        </ul>
+                    )}
+                </section>
+            </div>
         </>
     );
 }

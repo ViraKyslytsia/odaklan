@@ -42,7 +42,7 @@ export default function Leaderboard({ groups, scope, onScopeChange, onOpenUser }
     const ranked = entries.some((e) => e.seconds > 0);
 
     return (
-        <section>
+        <section className="soc-board">
             <div className="soc-toolbar">
                 <select
                     className="input soc-select"

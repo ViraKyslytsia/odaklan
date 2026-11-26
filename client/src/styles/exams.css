@@ -579,6 +579,7 @@ input[type='time'].input {
         flex: 1;
     }
 }
+
 /* таймер ближайшего экзамена: по размеру как мини-таймеры в карточках (только десктоп) */
 @media (min-width: 641px) {
     .exam-hero .countdown {
@@ -594,11 +595,13 @@ input[type='time'].input {
         font-size: 1.375rem;
     }
 }
+
 /* график статистики на странице экзаменов: компактнее */
 .exam-stats .chart {
-    max-width: 420px;
+    max-width: 560px;
 }
+
 /* плитки статистики такой же ширины, как график */
 .exam-stats .exam-stat-tiles {
-    max-width: 420px;
+    max-width: 560px;
 }

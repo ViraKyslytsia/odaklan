@@ -296,6 +296,7 @@
 .soc-month .soc-month-sums div {
     padding: var(--space-2) var(--space-3);
 }
+
 .soc-month.loading .soc-month-sums,
 .soc-month.loading .soc-cal {
     opacity: 0.45;
@@ -494,6 +495,7 @@
 .soc-list {
     max-width: 460px;
 }
+
 /* ---------- Участники группы: компактные строки ---------- */
 .soc-members .soc-row {
     padding: var(--space-2) var(--space-3);
@@ -532,15 +534,18 @@
     font-size: 12px;
     color: var(--text-dim);
 }
+
 /* выпадающий список и выбор даты рядом, а не на разных краях */
 .soc-toolbar {
     justify-content: flex-start;
 }
+
 /* компактные кнопки в строках списков, чтобы помещались в узкую колонку */
 .soc-actions .btn-sm {
     padding: 4px 10px;
     font-size: 13px;
 }
+
 /* ===== узкая колонка для поиска и форм ===== */
 .social-page .soc-forms,
 .social-page .field {
@@ -554,4 +559,34 @@
 
 .social-page .soc-toolbar .daynav-today {
     margin-left: 0;
+}
+
+/* рейтинг: ширина участников = ширине панели выбора (список групп + календарь).
+   Сам список не влияет на ширину блока (width: 0 + min-width: 100%), её задаёт тулбар */
+.soc-board {
+    width: fit-content;
+    max-width: 100%;
+}
+
+.soc-board> :not(.soc-toolbar) {
+    width: 0;
+    min-width: 100%;
+}
+
+.soc-board .soc-list {
+    max-width: none;
+}
+
+/* строки с кнопками (друзья, заявки, участники групп): в узкой колонке кнопки не влезают
+   рядом с именем, поэтому им разрешён перенос на вторую строку, а имя не сжимается в столбик */
+.soc-row {
+    flex-wrap: wrap;
+}
+
+.soc-row-main {
+    min-width: 120px;
+}
+
+.soc-row>.soc-actions {
+    flex: 1 1 auto;
 }

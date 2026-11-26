@@ -183,44 +183,50 @@ function PeriodsTab({ byDate, subjects, subjectNames, formatDuration, locale, to
                 </div>
             </div>
 
-            <StatTiles summary={summary} daysCount={n} formatDuration={formatDuration} locale={locale} />
+            <div className="stats-periods">
+                <div className="stats-col">
+                    <StatTiles summary={summary} daysCount={n} formatDuration={formatDuration} locale={locale} />
 
-            <LineChart
-                key={n}
-                items={items}
-                color={CHART_COLOR}
-                formatValue={formatDuration}
-                formatTick={formatTick}
-                ariaLabel={`${t('stats.chartLabel')}: ${formatDuration(summary.total)}`}
-            />
-            {summary.total === 0 && <p className="exam-stats-note">{t('stats.empty')}</p>}
+                    <LineChart
+                        key={n}
+                        items={items}
+                        color={CHART_COLOR}
+                        formatValue={formatDuration}
+                        formatTick={formatTick}
+                        ariaLabel={`${t('stats.chartLabel')}: ${formatDuration(summary.total)}`}
+                    />
+                    {summary.total === 0 && <p className="exam-stats-note">{t('stats.empty')}</p>}
+                </div>
 
-            <h3 className="stats-subtitle">{t('stats.bySubject')}</h3>
-            {error ? (
-                <p className="form-error">{t('stats.error', { message: error })}</p>
-            ) : !rows ? (
-                <div className="chart-skeleton" />
-            ) : rows.length === 0 ? (
-                <p className="exam-stats-note">{t('stats.empty')}</p>
-            ) : (
-                <ul className="subject-rows">
-                    {rows.map((row) => {
-                        const subject = subjects.get(row.subject);
-                        const share = summary.total > 0 ? (row.totalSeconds / summary.total) * 100 : 0;
-                        return (
-                            <li key={row.subject ?? 'none'} className="subject-row">
-                                <span className="subject-dot" style={{ background: subject?.color || 'var(--text-dim)' }} />
-                                <span className="subject-name">{subjectNames.get(row.subject) || t('stats.otherSubject')}</span>
-                                <span className="subject-time">{formatDuration(row.totalSeconds)}</span>
-                                <span className="subject-share">{Math.round(share)}%</span>
-                                <span className="subject-bar">
-                                    <span style={{ width: `${share}%`, background: subject?.color || 'var(--text-dim)' }} />
-                                </span>
-                            </li>
-                        );
-                    })}
-                </ul>
-            )}
+                <div className="stats-col">
+                    <h3 className="stats-subtitle">{t('stats.bySubject')}</h3>
+                    {error ? (
+                        <p className="form-error">{t('stats.error', { message: error })}</p>
+                    ) : !rows ? (
+                        <div className="chart-skeleton" />
+                    ) : rows.length === 0 ? (
+                        <p className="exam-stats-note">{t('stats.empty')}</p>
+                    ) : (
+                        <ul className="subject-rows">
+                            {rows.map((row) => {
+                                const subject = subjects.get(row.subject);
+                                const share = summary.total > 0 ? (row.totalSeconds / summary.total) * 100 : 0;
+                                return (
+                                    <li key={row.subject ?? 'none'} className="subject-row">
+                                        <span className="subject-dot" style={{ background: subject?.color || 'var(--text-dim)' }} />
+                                        <span className="subject-name">{subjectNames.get(row.subject) || t('stats.otherSubject')}</span>
+                                        <span className="subject-time">{formatDuration(row.totalSeconds)}</span>
+                                        <span className="subject-share">{Math.round(share)}%</span>
+                                        <span className="subject-bar">
+                                            <span style={{ width: `${share}%`, background: subject?.color || 'var(--text-dim)' }} />
+                                        </span>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                </div>
+            </div>
         </>
     );
 }
