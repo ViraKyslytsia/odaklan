@@ -1,5 +1,6 @@
 const Task = require('../models/Task');
 const createCrudRouter = require('../utils/crud');
+const { sendError } = createCrudRouter;
 const ownsSubject = require('../utils/ownsSubject');
 const isValidDate = require('../utils/isValidDate');
 
@@ -24,7 +25,7 @@ router.patch('/:id/toggle', async (req, res) => {
 
         res.json(task);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        sendError(res, err);
     }
 });
 

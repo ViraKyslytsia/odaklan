@@ -3,9 +3,9 @@ const StudySession = require('../models/StudySession');
 const Subject = require('../models/Subject');
 const ownsSubject = require('../utils/ownsSubject');
 const isValidDate = require('../utils/isValidDate');
-
+const { sendError } = require('../utils/crud');
 const router = express.Router();
-
+const MAX_DAILY_SECONDS = 16 * 60 * 60; // больше 16 часов учёбы в день не засчитываем
 router.post('/', async (req, res) => {
     try {
         const { date, seconds, subject } = req.body;
@@ -15,7 +15,12 @@ router.post('/', async (req, res) => {
         if (!(await ownsSubject(req.userId, subject))) {
             return res.status(400).json({ error: 'Subject not found' });
         }
-
+        // защита от накрутки рейтинга: сумма за день ограничена
+        const today = await StudySession.find({ user: req.userId, date }).select('seconds');
+        const total = today.reduce((sum, s) => sum + s.seconds, 0);
+        if (total + seconds > MAX_DAILY_SECONDS) {
+            return res.status(400).json({ error: 'Daily study limit exceeded' });
+        }
         const session = await StudySession.create({ user: req.userId, date, seconds, subject });
 
         if (subject) {
@@ -32,7 +37,7 @@ router.post('/', async (req, res) => {
 
         res.status(201).json(session);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        sendError(res, err);
     }
 });
 

@@ -79,3 +79,4 @@ function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, af
 }
 
 module.exports = createCrudRouter;
+module.exports.sendError = sendError;

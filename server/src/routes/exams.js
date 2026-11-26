@@ -1,5 +1,6 @@
 const Exam = require('../models/Exam');
 const createCrudRouter = require('../utils/crud');
+const { sendError } = createCrudRouter;
 const ownsSubject = require('../utils/ownsSubject');
 const isValidDate = require('../utils/isValidDate');
 
@@ -39,7 +40,7 @@ router.post('/:id/subtasks', async (req, res) => {
         await exam.save();
         res.status(201).json(exam);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        sendError(res, err);
     }
 });
 
@@ -59,7 +60,7 @@ router.patch('/:id/subtasks/:subId', async (req, res) => {
         await exam.save();
         res.json(exam);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        sendError(res, err);
     }
 });
 
@@ -74,7 +75,7 @@ router.patch('/:id/subtasks/:subId/toggle', async (req, res) => {
         await exam.save();
         res.json(exam);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        sendError(res, err);
     }
 });
 
@@ -89,7 +90,7 @@ router.delete('/:id/subtasks/:subId', async (req, res) => {
         await exam.save();
         res.json(exam);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        sendError(res, err);
     }
 });
 
