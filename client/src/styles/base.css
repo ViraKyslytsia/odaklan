@@ -83,3 +83,11 @@ a {
         padding: var(--space-4) var(--space-4);
     }
 }
+/* прячем полосы прокрутки везде; прокрутка колесом и пальцем работает как раньше */
+* {
+    scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}

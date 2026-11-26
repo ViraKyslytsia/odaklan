@@ -79,7 +79,7 @@ export default function GroupMembers({ group, reload, onOpenUser }) {
             <ul className="soc-list">
                 {data.members.map((u) => (
                     <li key={u.id} className="soc-row">
-                        <Avatar name={u.nickname} />
+                        <Avatar name={u.nickname} size={32} />
                         <div className="soc-row-main">
                             <div className="soc-row-top">
                                 <span className="soc-name static">

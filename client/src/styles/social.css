@@ -494,3 +494,41 @@
 ol.soc-list {
     max-width: 460px;
 }
+/* ---------- Участники группы: компактные строки ---------- */
+.soc-members .soc-row {
+    padding: var(--space-2) var(--space-3);
+}
+
+.soc-members .soc-row-main {
+    gap: 0;
+}
+
+/* роль стоит сразу после имени, а не у края строки */
+.soc-members .soc-row-top {
+    justify-content: flex-start;
+}
+
+.soc-members .soc-row-top .soc-tag {
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    font-size: 12px;
+}
+
+.soc-members .soc-status {
+    font-size: 12px;
+}
+
+.soc-members .soc-actions {
+    gap: var(--space-1);
+}
+
+.soc-members .soc-actions .btn-sm {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+
+.soc-members .soc-actions .soc-tag {
+    font-size: 12px;
+    color: var(--text-dim);
+}
