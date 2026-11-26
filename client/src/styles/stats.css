@@ -354,3 +354,23 @@
 .stats-page .segmented button {
     border-radius: 8px;
 }
+/* список предметов в статистике: уже и компактнее */
+.stats-page .stats-rows {
+    max-width: 480px;
+}
+
+.stats-page .stats-row {
+    min-height: 0;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    row-gap: 4px;
+}
+
+.stats-page .stats-row-name,
+.stats-page .stats-row-value {
+    font-size: 14px;
+}
+
+.stats-page .stats-row-bar {
+    height: 4px;
+}
