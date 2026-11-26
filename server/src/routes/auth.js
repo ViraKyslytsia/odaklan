@@ -137,8 +137,8 @@ router.post('/login', async (req, res) => {
             return res.status(403).json({ error: 'Email is not verified' });
         }
 
-        const expiresIn = remember ? '30d' : '1d';
-        res.json({ token: createToken(user.id, remember ===false ? '1d' : '30d') });
+        const expiresIn = remember === false ? '1d' : '30d';
+        res.json({ token: createToken(user.id, expiresIn) });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });

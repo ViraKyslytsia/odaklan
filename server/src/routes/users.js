@@ -1,4 +1,3 @@
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NICKNAME_RE = /^[\p{L}\p{N}_.]{3,20}$/u; // 3–20 символов: буквы, цифры, _ и точка
 const express = require('express');
 const User = require('../models/User');
@@ -46,16 +45,13 @@ router.get('/nickname-check', async (req, res) => {
 async function updateProfile(req, res) {
     try {
         const updates = {};
-        for (const field of ['name', 'email']) {
+        for (const field of ['name']) {
             const value = req.body[field];
             if (value === undefined) continue;
             if (typeof value !== 'string') {
                 return res.status(400).json({ error: `${field} must be a string` });
             }
             updates[field] = value.trim();
-        }
-        if (updates.email !== undefined && !EMAIL_RE.test(updates.email)) {
-            return res.status(400).json({ error: 'Invalid email format' });
         }
         if (req.body.nickname !== undefined) {
             const nickname = typeof req.body.nickname === 'string' ? req.body.nickname.trim() : '';

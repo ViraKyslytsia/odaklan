@@ -163,7 +163,12 @@ export default function Profile() {
 
                 {renderField('name', 'profile.name', 'text')}
                 {renderField('nickname', 'profile.nickname', 'text')}
-                {renderField('email', 'profile.email', 'email')}
+                <div className="field">
+                    <label htmlFor="p-email">{t('profile.email')}</label>
+                    <div className="input profile-box">
+                        <span className="profile-row-value">{profile?.email || '—'}</span>
+                    </div>
+                </div>
 
                 <RegionPicker
                     value={profile?.settings?.region}

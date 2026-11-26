@@ -8,6 +8,15 @@ function pick(source, fields) {
     return result;
 }
 
+// не показываем клиенту внутренний текст ошибок базы
+function sendError(res, err) {
+    if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return res.status(400).json({ error: 'Invalid data' });
+    }
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+}
+
 function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, afterDelete, sort = { createdAt: 1 } } = {}) {
     const router = express.Router();
 
@@ -30,7 +39,7 @@ function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, af
             const item = await Model.create({ ...pick(req.body, fields), user: req.userId });
             res.status(201).json(item);
         } catch (err) {
-            res.status(400).json({ error: err.message });
+            sendError(res, err);
         }
     });
 
@@ -48,7 +57,7 @@ function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, af
             if (!item) return res.status(404).json({ error: 'Not found' });
             res.json(item);
         } catch (err) {
-            res.status(400).json({ error: err.message });
+            sendError(res, err);
         }
     };
 
@@ -62,7 +71,7 @@ function createCrudRouter(Model, { fields, listFilter = () => ({}), validate, af
             if (afterDelete) await afterDelete(item);
             res.json({ ok: true });
         } catch (err) {
-            res.status(400).json({ error: err.message });
+            sendError(res, err);
         }
     });
 

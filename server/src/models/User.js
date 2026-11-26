@@ -18,7 +18,7 @@ const userSchema = new Schema(
         codeSentAt: Date,
         codeAttempts: { type: Number, default: 0 },
         settings: {
-            language: { type: String, enum: ['en', 'tr', 'ru', 'ua'], default: 'en' },
+            language: { type: String, enum: ['en', 'tr', 'ru', 'uk'], default: 'en' },
             focusMinutes: { type: Number, default: 25, min: 1, max: 180 },
             shortBreakMinutes: { type: Number, default: 5, min: 1, max: 60 },
             longBreakMinutes: { type: Number, default: 15, min: 1, max: 120 },
@@ -34,6 +34,12 @@ const userSchema = new Schema(
         },
     },
     { timestamps: true }
+);
+
+// неподтверждённые аккаунты удаляются через сутки
+userSchema.index(
+    { createdAt: 1 },
+    { expireAfterSeconds: 24 * 60 * 60, partialFilterExpression: { verified: false } }
 );
 
 module.exports = model('User', userSchema);

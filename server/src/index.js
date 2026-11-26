@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const { rateLimit } = require('express-rate-limit');
 const connectDB = require('./config/db');
 const auth = require('./middleware/auth');
 if (!process.env.JWT_SECRET) {
@@ -11,6 +13,7 @@ if (!process.env.JWT_SECRET) {
 const app = express();
 app.set('trust proxy', 1);
 
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({ origin: process.env.CLIENT_ORIGIN || '*' }));
 app.use(express.json({ limit: '2mb' }));
 app.use((req, res, next) => {
@@ -21,7 +24,17 @@ app.use((req, res, next) => {
 app.get('/api/health', (req, res) => {
     res.json({ ok: true });
 });
-
+// общий лимит на все запросы к API (у входа и регистрации есть ещё свой, строже)
+app.use(
+    '/api',
+    rateLimit({
+        windowMs: 15 * 60 * 1000,
+        limit: 1000,
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: { error: 'Too many requests, try again later' },
+    })
+);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/profile', auth, require('./routes/users'));
 app.use('/api/subjects', auth, require('./routes/subjects'));
