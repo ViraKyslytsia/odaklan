@@ -10,7 +10,8 @@ export const api = {
     verify: (data) => request('/api/auth/verify', { ...json('POST', data), auth: false }),
     resend: (data) => request('/api/auth/resend', { ...json('POST', data), auth: false }),
     login: (data) => request('/api/auth/login', { ...json('POST', data), auth: false }),
-
+    forgotPassword: (data) => request('/api/auth/forgot', { ...json('POST', data), auth: false }),
+    resetPassword: (data) => request('/api/auth/reset', { ...json('POST', data), auth: false }),
     // Профиль
     getProfile: () => request('/api/profile'),
     updateProfile: (data) => request('/api/profile', json('PUT', data)),

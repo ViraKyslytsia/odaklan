@@ -4,7 +4,6 @@ const User = require('../models/User');
 
 const router = express.Router();
 const publicFields = 'name email nickname settings';
-const SETTINGS_KEYS = ['language', 'focusMinutes', 'shortBreakMinutes', 'longBreakMinutes', 'setsBeforeLongBreak'];
 
 function isValidTimezone(tz) {
     if (typeof tz !== 'string' || !tz) return false;
@@ -63,10 +62,6 @@ async function updateProfile(req, res) {
         }
         const settings = req.body.settings;
         if (settings && typeof settings === 'object') {
-            for (const key of SETTINGS_KEYS) {
-                if (settings[key] !== undefined) updates[`settings.${key}`] = settings[key];
-            }
-
             const region = settings.region;
             if (region && typeof region === 'object') {
                 const { countryCode, countryName, city, latitude, longitude, timezone } = region;

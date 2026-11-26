@@ -122,6 +122,71 @@ router.post('/verify', async (req, res) => {
     }
 });
 
+// забыли пароль: шлём код на почту (всегда отвечаем «ок», чтобы нельзя было узнать, есть ли такая почта)
+router.post('/forgot', async (req, res) => {
+    try {
+        const user = await User.findOne({ email: normEmail(req.body.email) });
+        const recently =
+            user && user.resetSentAt && Date.now() - user.resetSentAt.getTime() < RESEND_COOLDOWN_MS;
+        if (user && user.verified && !recently) {
+            user.resetCode = String(crypto.randomInt(100000, 1000000));
+            user.resetExpires = new Date(Date.now() + CODE_TTL_MS);
+            user.resetSentAt = new Date();
+            user.resetAttempts = 0;
+            await user.save();
+            await sendCode(user.email, user.resetCode, 'reset');
+        }
+        res.json({ ok: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// новый пароль по коду из письма; после смены сразу входим
+router.post('/reset', async (req, res) => {
+    try {
+        const { email, code, password } = req.body;
+        if (!isStr(password) || password.length < 6) {
+            return res.status(400).json({ error: 'Password must be at least 6 characters' });
+        }
+
+        const user = await User.findOne({ email: normEmail(email) });
+        if (!user || !user.verified || !user.resetCode || !user.resetExpires || user.resetExpires < new Date()) {
+            return res.status(400).json({ error: 'Invalid or expired code' });
+        }
+
+        if (user.resetCode !== String(code)) {
+            user.resetAttempts += 1;
+            if (user.resetAttempts >= MAX_CODE_ATTEMPTS) {
+                user.resetCode = undefined;
+                user.resetExpires = undefined;
+                user.resetAttempts = 0;
+                await user.save();
+                return res.status(400).json({ error: 'Too many wrong attempts. Request a new code' });
+            }
+            await user.save();
+            return res.status(400).json({ error: 'Invalid or expired code' });
+        }
+
+        // новый пароль не должен совпадать со старым
+        if (await bcrypt.compare(password, user.passwordHash)) {
+            return res.status(422).json({ error: 'New password must be different from the old one' });
+        }
+
+        user.passwordHash = await bcrypt.hash(password, 10);
+        user.resetCode = undefined;
+        user.resetExpires = undefined;
+        user.resetAttempts = 0;
+        await user.save();
+
+        res.json({ ok: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 router.post('/login', async (req, res) => {
     try {
         const { email, password, remember } = req.body;

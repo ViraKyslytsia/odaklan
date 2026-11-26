@@ -30,7 +30,7 @@ export default function Register() {
             setPendingEmail(email);
             navigate('/verify');
         } catch (err) {
-            setError(err.message);
+            setError(err.status === 0 ? t('toast.network') : err.message);
         } finally {
             setLoading(false);
         }

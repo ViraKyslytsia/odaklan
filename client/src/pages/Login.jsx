@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { api } from '../api';
 import AuthLayout from '../components/AuthLayout';
 import { useAuth } from '../context/AuthContext';
 import { setPendingEmail } from '../utils/pendingEmail';
 import { useT } from '../i18n/LanguageContext';
+import { useSlowHint } from '../hooks/useSlowHint';
 export default function Login() {
     const {t} = useT();
     const navigate = useNavigate();
+    const location = useLocation();
     const { signIn } = useAuth();
     const [form, setForm] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [remember, setRemember] = useState(true);
     const [loading, setLoading] = useState(false);
+    const slow = useSlowHint(loading);
 
     const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -34,7 +37,7 @@ export default function Login() {
                 navigate('/verify');
                 return;
             }
-            setError(err.message);
+            setError(err.status === 0 ? t('toast.network') : err.message);
         } finally {
             setLoading(false);
         }
@@ -62,12 +65,17 @@ export default function Login() {
                     />
                     <span>{t('login.remember')}</span>
                 </label>
+                {loading && slow && <p className="form-note">{t('server.waking')}</p>}
+                {location.state?.passwordChanged && <p className="form-note">{t('login.passwordChanged')}</p>}
                 {error && <p className="form-error">{error}</p>}
 
                 <button className="btn btn-primary btn-block" disabled={loading}>
                     {loading ? t('login.loading') : t('login.submit')}
                 </button>
             </form>
+            <p className="auth-footer">
+                <Link to="/forgot">{t('login.forgot')}</Link>
+            </p>
             <p className="auth-footer">
                 {t('login.noAccount')} <Link to="/register">{t('login.toRegister')}</Link>
             </p>

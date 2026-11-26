@@ -29,14 +29,18 @@ function parseSender() {
     return { name: 'odaklan', email: raw };
 }
 
-function buildHtml(code) {
+function buildHtml(code, reset = false) {
+    const title = reset ? 'Your password reset code' : 'Your verification code';
+    const note = reset
+        ? 'This code expires in 10 minutes. If you did not ask to reset your password, just ignore this email.'
+        : 'This code expires in 10 minutes. If you did not sign up, just ignore this email.';
     return `
   <div style="font-family:Arial,sans-serif;background:#FAF9F7;padding:32px;">
     <div style="max-width:420px;margin:0 auto;background:#ffffff;border-radius:16px;padding:32px;text-align:center;">
       <h2 style="color:#6D5BFF;margin:0 0 8px;">odaklan</h2>
-      <p style="color:#444444;margin:0 0 24px;">Your verification code</p>
+      <p style="color:#444444;margin:0 0 24px;">${title}</p>
       <div style="font-size:36px;letter-spacing:8px;font-weight:bold;color:#222222;margin-bottom:24px;">${code}</div>
-      <p style="color:#888888;font-size:13px;margin:0;">This code expires in 10 minutes. If you did not sign up, just ignore this email.</p>
+      <p style="color:#888888;font-size:13px;margin:0;">${note}</p>
     </div>
   </div>`;
 }
@@ -87,7 +91,9 @@ async function sendMail({ to, subject, text, html }) {
 
 const isConfigured = () => Boolean(brevoKey || transporter);
 
-async function sendCode(to, code) {
+// purpose: 'verify' (подтверждение почты) или 'reset' (сброс пароля)
+async function sendCode(to, code, purpose = 'verify') {
+    const reset = purpose === 'reset';
     if (!isConfigured()) {
         console.log(`[DEV] Verification code for ${to}: ${code}`);
         return;
@@ -96,9 +102,9 @@ async function sendCode(to, code) {
     try {
         await sendMail({
             to,
-            subject: 'odaklan: your verification code',
-            text: `Your verification code is ${code}. It expires in 10 minutes.`,
-            html: buildHtml(code),
+            subject: reset ? 'odaklan: password reset code' : 'odaklan: your verification code',
+            text: `Your ${reset ? 'password reset' : 'verification'} code is ${code}. It expires in 10 minutes.`,
+            html: buildHtml(code, reset),
         });
         console.log(`Verification email sent to ${to}`);
     } catch (err) {

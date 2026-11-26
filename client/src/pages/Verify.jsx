@@ -39,7 +39,7 @@ export default function Verify() {
             signIn(token);
             navigate('/', { replace: true });
         } catch (err) {
-            setError(err.message);
+            setError(err.status === 0 ? t('toast.network') : err.message);
         } finally {
             setLoading(false);
         }
@@ -53,7 +53,7 @@ export default function Verify() {
             setInfo(t('verify.resent'));
             setCooldown(RESEND_SECONDS);
         } catch (err) {
-            setError(err.message);
+            setError(err.status === 0 ? t('toast.network') : err.message);
         }
     }
 

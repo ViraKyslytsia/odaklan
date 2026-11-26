@@ -22,24 +22,46 @@ export class ApiError extends Error {
     }
 }
 
+const TIMEOUT_MS = 75000; // сервер на бесплатном хостинге просыпается около минуты
+const RETRY_STATUSES = [502, 503, 504];
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchWithTimeout(url, options) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    try {
+        return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 export async function request(path, { method = 'GET', body, auth = true } = {}) {
     const headers = {};
     if (body !== undefined) headers['Content-Type'] = 'application/json';
 
     const token = getToken();
     if (auth && token) headers.Authorization = `Bearer ${token}`;
-
+    const options = {
+        method,
+        headers,
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+    };
+    // повторяем только чтение: повтор записи мог бы создать дубликат
+    const attempts = method === 'GET' ? 3 : 1;
     let res;
-    try {
-        res = await fetch(`${BASE}${path}`, {
-            method,
-            headers,
-            body: body !== undefined ? JSON.stringify(body) : undefined,
-        });
-    } catch {
-        throw new ApiError('Sunucuya ulaşılamıyor', 0);
+    for (let i = 1; i <= attempts; i++) {
+        try {
+            res = await fetchWithTimeout(`${BASE}${path}`, options);
+        } catch {
+            if (i === attempts) throw new ApiError('Network error', 0);
+            await wait(2000 * i);
+            continue;
+        }
+        if (!RETRY_STATUSES.includes(res.status) || i === attempts) break;
+        await wait(2000 * i);
     }
-
+    
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {

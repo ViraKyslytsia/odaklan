@@ -19,6 +19,9 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { LanguageProvider } from './i18n/LanguageContext.jsx';
 import './styles/toast.css';
 import { ToastProvider } from './context/ToastContext.jsx';
+import { api } from './api';
+// будим сервер на бесплатном хостинге заранее, пока человек открывает сайт и вводит пароль
+api.health().catch(() => { });
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

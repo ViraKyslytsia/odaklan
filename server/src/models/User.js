@@ -17,12 +17,12 @@ const userSchema = new Schema(
         codeExpires: Date,
         codeSentAt: Date,
         codeAttempts: { type: Number, default: 0 },
+        // код для сброса пароля (отдельно от кода подтверждения почты)
+        resetCode: String,
+        resetExpires: Date,
+        resetSentAt: Date,
+        resetAttempts: { type: Number, default: 0 },
         settings: {
-            language: { type: String, enum: ['en', 'tr', 'ru', 'uk'], default: 'en' },
-            focusMinutes: { type: Number, default: 25, min: 1, max: 180 },
-            shortBreakMinutes: { type: Number, default: 5, min: 1, max: 60 },
-            longBreakMinutes: { type: Number, default: 15, min: 1, max: 120 },
-            setsBeforeLongBreak: { type: Number, default: 4, min: 1, max: 12 },
             region: {
                 countryCode: { type: String, default: '' },
                 countryName: { type: String, default: '' },

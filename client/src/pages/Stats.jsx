@@ -157,7 +157,7 @@ function PeriodsTab({ byDate, subjects, subjectNames, formatDuration, locale, to
                 setBreakdown({ n, subjects: res.subjects });
                 setError('');
             })
-            .catch((err) => !cancelled && setError(err.message));
+            .catch((err) => !cancelled && setError(err.status === 0 ? t('toast.network') : err.message))
         return () => {
             cancelled = true;
         };
@@ -382,7 +382,7 @@ export default function Stats() {
                 const subjects = new Map(subjectList.map((s) => [s._id, s]));
                 setData({ byDate, monthTotals, yearTotals, subjects });
             })
-            .catch((err) => !cancelled && setError(err.message));
+            .catch((err) => !cancelled && setError(err.status === 0 ? t('toast.network') : err.message))
         return () => {
             cancelled = true;
         };
