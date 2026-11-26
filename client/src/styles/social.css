@@ -491,7 +491,7 @@
 }
 
 /* рейтинг за день: делаем уже */
-ol.soc-list {
+.soc-list {
     max-width: 460px;
 }
 /* ---------- Участники группы: компактные строки ---------- */
@@ -531,4 +531,27 @@ ol.soc-list {
 .soc-members .soc-actions .soc-tag {
     font-size: 12px;
     color: var(--text-dim);
+}
+/* выпадающий список и выбор даты рядом, а не на разных краях */
+.soc-toolbar {
+    justify-content: flex-start;
+}
+/* компактные кнопки в строках списков, чтобы помещались в узкую колонку */
+.soc-actions .btn-sm {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+/* ===== узкая колонка для поиска и форм ===== */
+.social-page .soc-forms,
+.social-page .field {
+    max-width: 460px;
+}
+
+/* рейтинг: дата на одной линии со списком групп, без лишних отступов */
+.social-page .soc-toolbar .daynav {
+    margin-bottom: 0;
+}
+
+.social-page .soc-toolbar .daynav-today {
+    margin-left: 0;
 }

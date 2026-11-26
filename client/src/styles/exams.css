@@ -598,3 +598,7 @@ input[type='time'].input {
 .exam-stats .chart {
     max-width: 420px;
 }
+/* плитки статистики такой же ширины, как график */
+.exam-stats .exam-stat-tiles {
+    max-width: 420px;
+}
