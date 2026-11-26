@@ -88,3 +88,7 @@ Auth: JWT in the header `Authorization: Bearer <token>`.
 All addresses except `/api/auth/*` and `/api/health` require a token.
 Errors are returned as `{ "error": "message" }` with the matching HTTP status
 (400, 401, 403, 404, 409, 500). Request examples are in `server/api-tests.http`.
+## Testing
+
+The API is checked manually with `server/api-tests.http` (REST Client / Thunder Client):
+registration, login, CRUD for every resource and negative cases (wrong input, foreign data, limits).
