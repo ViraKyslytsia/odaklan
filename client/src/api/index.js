@@ -9,6 +9,7 @@ export const api = {
     register: (data) => request('/api/auth/register', { ...json('POST', data), auth: false }),
     verify: (data) => request('/api/auth/verify', { ...json('POST', data), auth: false }),
     resend: (data) => request('/api/auth/resend', { ...json('POST', data), auth: false }),
+    logout: () => request('/api/auth/logout', { method: 'POST' }),
     login: (data) => request('/api/auth/login', { ...json('POST', data), auth: false }),
     forgotPassword: (data) => request('/api/auth/forgot', { ...json('POST', data), auth: false }),
     resetPassword: (data) => request('/api/auth/reset', { ...json('POST', data), auth: false }),
@@ -57,7 +58,7 @@ export const api = {
     deleteScheduleItem: (id) => request(`/api/schedule/${id}`, { method: 'DELETE' }),
 
     // Социальное: друзья, блокировки, группы, рейтинг
-    sendPresence: (studying) => request('/api/social/presence', json('POST', { studying })),
+    sendPresence: (studying, lang) => request('/api/social/presence', json('POST', { studying, lang })),
     getSocial: () => request('/api/social/overview'),
     searchUsers: (q) => request(`/api/social/search?q=${encodeURIComponent(q)}`),
     sendFriendRequest: (userId) => request('/api/social/requests', json('POST', { userId })),
@@ -79,4 +80,32 @@ export const api = {
             (groupId ? `&scope=group&group=${groupId}` : '&scope=friends')
         ),
     getUserMonth: (userId, month) => request(`/api/social/users/${userId}/month?month=${month}`),
+    // Админка
+    adminOverview: () => request('/api/admin/overview'),
+    adminCharts: (days = 30) => request(`/api/admin/charts?days=${days}`),
+    adminUsers: (params) => request(`/api/admin/users?${new URLSearchParams(params)}`),
+    adminLangRegions: () => request('/api/admin/stats/languages-regions'),
+    adminHeatmap: () => request(`/api/admin/heatmap?tz=${new Date().getTimezoneOffset()}`),
+    adminExportUsers: () => request('/api/admin/export/users'),
+    adminExportSessions: () => request('/api/admin/export/sessions'),
+    adminSessions: (params) => request(`/api/admin/sessions?${new URLSearchParams(params)}`),
+    adminStudySummary: () => request(`/api/admin/study-summary?tz=${new Date().getTimezoneOffset()}`),
+    adminActivity: (params) => request(`/api/admin/activity?${new URLSearchParams(params)}`),
+    adminContentSummary: () => request('/api/admin/content-summary'),
+    adminUserContent: (id) => request(`/api/admin/users/${id}/content`),
+    adminGroups: () => request('/api/admin/groups'),
+    adminGroup: (id) => request(`/api/admin/groups/${id}`),
+    adminDeleteGroup: (id, reason) => request(`/api/admin/groups/${id}`, json('DELETE', { reason })),
+    adminRemoveMember: (groupId, userId, reason) =>
+        request(`/api/admin/groups/${groupId}/members/${userId}`, json('DELETE', { reason })),
+    adminBlockUser: (id, reason) => request(`/api/admin/users/${id}/block`, json('PATCH', { reason })),
+    adminUnblockUser: (id) => request(`/api/admin/users/${id}/unblock`, json('PATCH', {})),
+    adminDeleteUser: (id, reason) => request(`/api/admin/users/${id}`, json('DELETE', { reason })),
+    adminUserStudy: (id, days = 30) => request(`/api/admin/users/${id}/study?days=${days}`),
+    adminLogs: (params) => request(`/api/admin/logs?${new URLSearchParams(params)}`),
+    // Объявления
+    announcements: () => request('/api/announcements'),
+    adminAnnouncements: () => request('/api/admin/announcements'),
+    adminCreateAnnouncement: (data) => request('/api/admin/announcements', json('POST', data)),
+    adminDeleteAnnouncement: (id) => request(`/api/admin/announcements/${id}`, { method: 'DELETE' }),
 };

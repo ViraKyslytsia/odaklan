@@ -815,3 +815,52 @@ background: var(--ring-a, var(--primary));
 .greeting-date::first-letter {
     text-transform: uppercase;
 }
+/* объявления от админа */
+.ann-list {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.ann-banner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--teal);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--teal) 10%, var(--surface-2));
+}
+
+.ann-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--teal);
+}
+
+.ann-text {
+    margin: 0;
+    color: var(--text-strong);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.ann-close {
+    flex: none;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ann-close:hover {
+    color: var(--text-strong);
+}

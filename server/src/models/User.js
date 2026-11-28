@@ -8,7 +8,6 @@ const userSchema = new Schema(
         // то же самое в нижнем регистре: по нему проверяем уникальность, чтобы «Vira» и «vira» были одним именем
         nicknameKey: { type: String, unique: true, sparse: true },
         passwordHash: { type: String, required: true },
-        avatar: { type: String, default: '' },
         verified: { type: Boolean, default: false },
         // присутствие: когда последний раз был в приложении и до какого момента считается, что учится
         lastSeen: { type: Date, default: null },
@@ -16,6 +15,13 @@ const userSchema = new Schema(
         code: String,
         codeExpires: Date,
         codeSentAt: Date,
+        role: { type: String, enum: ['user', 'admin'], default: 'user' },
+        isBlocked: { type: Boolean, default: false },
+        blockedAt: { type: Date, default: null },
+        blockedReason: { type: String, default: '', maxlength: 200 },
+        lastLoginAt: { type: Date, default: null },
+        lastLogoutAt: { type: Date, default: null },
+        language: { type: String, enum: ['', 'en', 'tr', 'ru', 'uk'], default: '' },
         codeAttempts: { type: Number, default: 0 },
         // код для сброса пароля (отдельно от кода подтверждения почты)
         resetCode: String,

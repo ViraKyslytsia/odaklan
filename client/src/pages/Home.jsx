@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../api';
+import AnnouncementBanner from '../components/AnnouncementBanner';
 import Greeting from '../components/Greeting';
 import QuickCards from '../components/QuickCards';
 import TimerCard from '../components/TimerCard';
@@ -82,6 +83,7 @@ export default function Home() {
     return (
         <>
             <Greeting name={name} timeZone={region?.timezone} />
+            <AnnouncementBanner />
             <div className="home-grid">
                 <TimerCard subjects={subjects} onSubjectsChange={setSubjects} />
                 <div className="home-side">

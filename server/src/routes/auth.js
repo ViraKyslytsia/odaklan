@@ -1,4 +1,6 @@
 const express = require('express');
+const auth = require('../middleware/auth');
+const { logActivity } = require('../utils/activity');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -12,10 +14,24 @@ const CODE_TTL_MS = 10 * 60 * 1000;
 const RESEND_COOLDOWN_MS = 60 * 1000;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// регистрация, коды, сброс пароля: 300 запросов за 15 минут с одного IP
 router.use(
     rateLimit({
         windowMs: 15 * 60 * 1000,
+        limit: 300,
+        skip: (req) => req.path === '/login',
+        standardHeaders: true,
+        legacyHeaders: false,
+        message: { error: 'Too many requests, try again later' },
+    })
+);
+// вход: считаем только неудачные попытки, удачные входы не считаются
+router.use(
+    '/login',
+    rateLimit({
+        windowMs: 15 * 60 * 1000,
         limit: 100,
+        skipSuccessfulRequests: true,
         standardHeaders: true,
         legacyHeaders: false,
         message: { error: 'Too many requests, try again later' },
@@ -114,7 +130,7 @@ router.post('/verify', async (req, res) => {
         user.codeExpires = undefined;
         user.codeAttempts = 0;
         await user.save();
-
+        await logActivity(user.id, 'login');
         res.json({ token: createToken(user.id) });
     } catch (err) {
         console.error(err);
@@ -201,13 +217,20 @@ router.post('/login', async (req, res) => {
         if (!user.verified) {
             return res.status(403).json({ error: 'Email is not verified' });
         }
-
+        if (user.isBlocked) {
+            return res.status(403).json({ error: 'Account is blocked', code: 'blocked' });
+        }
+        
         const expiresIn = remember === false ? '1d' : '30d';
+        await logActivity(user.id, 'login');
         res.json({ token: createToken(user.id, expiresIn) });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });
     }
 });
-
+router.post('/logout', auth, async (req, res) => {
+    await logActivity(req.userId, 'logout');
+    res.json({ ok: true });
+});
 module.exports = router;

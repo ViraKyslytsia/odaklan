@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { api } from '../api';
 import { useT } from '../i18n/LanguageContext';
 import Logo from './Logo';
 import { startPresence } from '../utils/presence';
@@ -12,12 +13,21 @@ const NAV_ITEMS = [
     { to: '/social', labelKey: 'nav.social' },
     { to: '/profile', labelKey: 'nav.profile' },
 ];
+const ADMIN_NAV = [
+    { to: '/admin', labelKey: 'nav.admin' },
+    { to: '/profile', labelKey: 'nav.profile' },
+];
 
 export default function AppLayout() {
     const { t, lang } = useT();
     const { pathname } = useLocation();
     const navRef = useRef(null);
     const [edges, setEdges] = useState({ left: false, right: false });
+    const [isAdmin, setIsAdmin] = useState(false);
+    useEffect(() => {
+        api.getProfile().then((p) => setIsAdmin(p?.role === 'admin')).catch(() => { });
+    }, []);
+    const navItems = isAdmin ? ADMIN_NAV : NAV_ITEMS;
     // пока приложение открыто, друзья видят нас «в сети»
     useEffect(() => startPresence(), []);
     // где в меню ещё есть что прокручивать: там показываем плавное затухание края
@@ -58,7 +68,10 @@ export default function AppLayout() {
             ?.querySelector('.nav-link.active')
             ?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
     }, [pathname, lang]);
-
+    // админ работает только в панели и профиле
+    if (isAdmin && pathname !== '/admin' && pathname !== '/profile') {
+        return <Navigate to="/admin" replace />;
+    }
     return (
         <div className="container">
             <header className="app-header">
@@ -67,7 +80,7 @@ export default function AppLayout() {
                     ref={navRef}
                     className={`nav${edges.left ? ' fade-left' : ''}${edges.right ? ' fade-right' : ''}`}
                 >
-                    {NAV_ITEMS.map((item) => (
+                    {navItems.map((item) => (
                         <NavLink
                             key={item.to}
                             to={item.to}
@@ -82,6 +95,7 @@ export default function AppLayout() {
             <main key={pathname}>
                 <Outlet />
             </main>
+            
         </div>
     );
 }

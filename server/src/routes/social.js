@@ -12,6 +12,7 @@ const router = express.Router();
 
 const PUBLIC_FIELDS = 'nickname name lastSeen studyingUntil'; // email и прочее наружу не отдаём
 const PRESENCE_TTL_MS = 100 * 1000; // клиент шлёт «я тут» раз в ~30 секунд (фоновые вкладки браузер притормаживает)
+const LANGS = ['en', 'tr', 'ru', 'uk'];
 const MAX_OUTGOING_REQUESTS = 50;
 const MAX_FRIENDS = 200;
 const MAX_GROUPS_PER_USER = 10;
@@ -112,6 +113,8 @@ router.post('/presence', async (req, res) => {
             {
                 lastSeen: new Date(now),
                 studyingUntil: req.body.studying === true ? new Date(now + PRESENCE_TTL_MS) : null,
+                // язык интерфейса для админ-статистики (только из разрешённого списка)
+                ...(LANGS.includes(req.body.lang) ? { language: req.body.lang } : {}),
             }
         );
         res.json({ ok: true });

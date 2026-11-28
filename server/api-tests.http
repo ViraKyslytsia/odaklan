@@ -113,7 +113,7 @@ Authorization: Bearer abc123
 ### ============ 3. PROFILE ============
 
 ### 3.1 Get profile
-# Expected: 200 name, email, avatar and settings (language en, focusMinutes 25, ...)
+# Expected: 200 name, email, nickname and settings (region)
 GET {{baseUrl}}/api/profile
 Authorization: Bearer {{token1}}
 
@@ -165,15 +165,7 @@ Content-Type: application/json
 
 { "email": "{{email2}}" }
 
-### 3.8 Set a small avatar (base64)
-# Expected: 200 avatar contains the data string
-PATCH {{baseUrl}}/api/profile
-Authorization: Bearer {{token1}}
-Content-Type: application/json
-
-{ "avatar": "data:image/png;base64,iVBORw0KGgo=" }
-
-### 3.9 Restore name
+### 3.8 Restore name
 # Expected: 200 name is "Vira"
 PUT {{baseUrl}}/api/profile
 Authorization: Bearer {{token1}}

@@ -3,7 +3,7 @@ const express = require('express');
 const User = require('../models/User');
 
 const router = express.Router();
-const publicFields = 'name email nickname settings';
+const publicFields = 'name email nickname settings role';
 
 function isValidTimezone(tz) {
     if (typeof tz !== 'string' || !tz) return false;

@@ -13,6 +13,7 @@ import Stats from './pages/Stats';
 import Tasks from './pages/Tasks';
 import Verify from './pages/Verify';
 import Social from './pages/Social';
+import Admin from './pages/Admin';
 export default function App() {
   return (
     <ErrorBoundary>
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/exams" element={<Exams />} />
           <Route path="/social" element={<Social />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

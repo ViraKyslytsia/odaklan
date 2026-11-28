@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { clearToken, getToken, setToken } from '../api/client';
-
+import { api } from '../api';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -12,6 +12,8 @@ export function AuthProvider({ children }) {
     }, []);
 
     const signOut = useCallback(() => {
+        // сообщаем серверу о выходе (ответ не ждём); токен берётся до очистки, поэтому порядок важен
+        api.logout().catch(() => { });
         clearToken();
         setTokenState(null);
     }, []);

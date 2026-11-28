@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useT } from '../i18n/LanguageContext';
 
 // Окно подтверждения в стиле сайта (вместо системного window.confirm)
-export default function ConfirmDialog({ title, text, hint, confirmLabel, onConfirm, onCancel }) {
+export default function ConfirmDialog({ title, text, hint, children, confirmDisabled, confirmLabel, cancelLabel, onConfirm, onCancel }) {
     const { t } = useT();
     const cancelRef = useRef(null);
 
@@ -36,11 +36,12 @@ export default function ConfirmDialog({ title, text, hint, confirmLabel, onConfi
                 <h2 id="confirm-title" className="confirm-title">{title}</h2>
                 <p className="confirm-text">{text}</p>
                 {hint && <p className="confirm-hint">{hint}</p>}
+                {children}
                 <div className="modal-actions">
                     <button ref={cancelRef} type="button" className="btn btn-secondary" onClick={onCancel}>
-                        {t('common.cancel')}
+                        {cancelLabel ?? t('common.cancel')}
                     </button>
-                    <button type="button" className="btn btn-danger" onClick={onConfirm}>
+                    <button type="button" className="btn btn-danger" onClick={onConfirm} disabled={confirmDisabled}>
                         {confirmLabel}
                     </button>
                 </div>

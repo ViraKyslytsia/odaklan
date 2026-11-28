@@ -16,9 +16,10 @@ export const clearToken = () => {
 };
 
 export class ApiError extends Error {
-    constructor(message, status) {
+    constructor(message, status, code) {
         super(message);
         this.status = status;
+        this.code = code;
     }
 }
 
@@ -70,8 +71,14 @@ export async function request(path, { method = 'GET', body, auth = true } = {}) 
             clearToken();
             window.dispatchEvent(new Event('auth:logout'));
         }
+        // аккаунт заблокирован админом: выходим и запоминаем, чтобы показать сообщение на странице входа
+        if (res.status === 403 && data?.code === 'blocked' && auth && token) {
+            sessionStorage.setItem('odaklan_blocked', '1');
+            clearToken();
+            window.dispatchEvent(new Event('auth:logout'));
+        }
         // если сервер не ответил JSON-ом (обычно он просто не запущен), показываем код ответа
-        throw new ApiError(data?.error || `Request failed (${res.status})`, res.status);
+        throw new ApiError(data?.error || `Request failed (${res.status})`, res.status, data?.code);
     }
 
     return data;

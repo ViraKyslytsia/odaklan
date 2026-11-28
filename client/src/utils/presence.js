@@ -9,7 +9,7 @@ let timerId = null;
 function ping() {
     // свёрнутую вкладку онлайн не считаем, кроме случая, когда в ней идёт таймер
     if (document.hidden && !studying) return;
-    api.sendPresence(studying).catch(() => {});
+    api.sendPresence(studying, document.documentElement.lang).catch(() => { });
 }
 
 // возвращает функцию остановки (для useEffect)

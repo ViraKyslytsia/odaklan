@@ -16,6 +16,7 @@ export default function Login() {
     const [remember, setRemember] = useState(true);
     const [loading, setLoading] = useState(false);
     const slow = useSlowHint(loading);
+    const [wasBlocked] = useState(() => sessionStorage.getItem('odaklan_blocked') === '1');
 
     const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -27,17 +28,18 @@ export default function Login() {
             const email = form.email.trim().toLowerCase();
             const { token } = await api.login({ email, password: form.password, remember });
             signIn(token, remember);
+            sessionStorage.removeItem('odaklan_blocked');
             navigate('/', { replace: true });
         } catch (err) {
             // 403 = почта ещё не подтверждена: отправляем на ввод кода
-            if (err.status === 403) {
+            if (err.status === 403 && err.code !== 'blocked') {
                 const email = form.email.trim().toLowerCase();
                 setPendingEmail(email);
                 api.resend({ email }).catch(() => { });
                 navigate('/verify');
                 return;
             }
-            setError(err.status === 0 ? t('toast.network') : err.message);
+            setError(err.status === 0 ? t('toast.network') : err.code === 'blocked' ? t('login.blocked') : err.message);
         } finally {
             setLoading(false);
         }
@@ -67,6 +69,7 @@ export default function Login() {
                 </label>
                 {loading && slow && <p className="form-note">{t('server.waking')}</p>}
                 {location.state?.passwordChanged && <p className="form-note">{t('login.passwordChanged')}</p>}
+                {wasBlocked && !error && <p className="form-error">{t('login.blocked')}</p>}
                 {error && <p className="form-error">{error}</p>}
 
                 <button className="btn btn-primary btn-block" disabled={loading}>

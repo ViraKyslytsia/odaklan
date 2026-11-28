@@ -14,6 +14,7 @@ import './styles/stats.css';
 import './styles/schedule.css';
 import './styles/page-art.css';
 import './styles/social.css';
+import './styles/admin.css';
 import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { LanguageProvider } from './i18n/LanguageContext.jsx';
